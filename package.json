@@ -1,7 +1,7 @@
 {
   "name": "gulp-protractor-advisor",
   "version": "0.1.0",
-  "description": "Watch Protractor tests to notify when any element() can't be find on html code.",
+  "description": "A gulp plugin to help avoiding broken Protractor tests due to not found element() selectos.",
   "license": "MIT",
   "repository": "ramonvictor/gulp-protractor-advisor",
   "author": {

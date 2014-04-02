@@ -1,6 +1,6 @@
-# [gulp](http://gulpjs.com)-protractor-advisor [![Build Status](https://secure.travis-ci.org/ramonvictor/gulp-protractor-advisor.png?branch=master)](http://travis-ci.org/ramonvictor/gulp-protractor-advisor)
+# [gulp](http://gulpjs.com)-protractor-advisor
 
-> A gulp plugin to help avoiding broken tests due to not found element() selectos.
+> A gulp plugin to help avoiding broken Protractor tests due to not found element() selectos.
 
 
 ## Install
