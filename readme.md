@@ -29,12 +29,13 @@ gulp.task('default', function () {
 
 #### options
 
-##### foo
+##### watchViewSrc
 
-Type: `Boolean`  
-Default: `false`
+Type: `String`  
+Default: `""`
 
-Lorem ipsum.
+Inform the view root folder. Where your angular html templates are located.
+i.e: `watchViewSrc : "view/*.html"`
 
 
 ## License
