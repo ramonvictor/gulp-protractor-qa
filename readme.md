@@ -15,10 +15,22 @@ npm install --save-dev gulp-protractor-qa
 ```js
 var gulp = require('gulp');
 var protractorQA = require('gulp-protractor-qa');
+```
 
-gulp.task('default', function () {
-	gulp.src('tests/*-spec.js')
-		.pipe(protractorQA());
+Registering the task
+```js
+gulp.task('protractor-qa', function() {
+    protractorQA.init({
+        testSrc : 'test/e2e/**/*Spec.js',
+        viewSrc : 'partials/*.html'
+    });
+});
+```
+
+Running it
+```js
+gulp.task('default', function() {   
+    gulp.run('protractor-qa');
 });
 ```
 
