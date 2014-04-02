@@ -1,0 +1,31 @@
+{
+  "name": "gulp-protractor-advisor",
+  "version": "0.1.0",
+  "description": "Watch Protractor tests to notify when any element() can't be find on html code.",
+  "license": "MIT",
+  "repository": "ramonvictor/gulp-protractor-advisor",
+  "author": {
+    "name": "Ramon Victor",
+    "email": "ramon.wd@gmail.com",
+    "url": "https://github.com/ramonvictor"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "main": "index.js",
+  "keywords": [
+    "protractor",
+    "e2e",
+    "tests"
+  ],
+  "dependencies": {
+    "gulp-util": "~2.2.14",
+    "through2": "~0.4.1"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
+}
