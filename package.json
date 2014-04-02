@@ -1,9 +1,9 @@
 {
-  "name": "gulp-protractor-advisor",
+  "name": "gulp-protractor-qa",
   "version": "0.1.0",
   "description": "A gulp plugin to help avoiding broken Protractor tests due to not found element() selectos.",
   "license": "MIT",
-  "repository": "ramonvictor/gulp-protractor-advisor",
+  "repository": "ramonvictor/gulp-protractor-qa",
   "author": {
     "name": "Ramon Victor",
     "email": "ramon.wd@gmail.com",

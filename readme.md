@@ -1,4 +1,4 @@
-# [gulp](http://gulpjs.com)-protractor-advisor
+# [gulp](http://gulpjs.com)-protractor-qa
 
 > A gulp plugin to help avoiding broken Protractor tests due to not found element() selectos.
 
@@ -6,7 +6,7 @@
 ## Install
 
 ```
-npm install --save-dev gulp-protractor-advisor
+npm install --save-dev gulp-protractor-qa
 ```
 
 
@@ -14,18 +14,18 @@ npm install --save-dev gulp-protractor-advisor
 
 ```js
 var gulp = require('gulp');
-var protractorAdvisor = require('gulp-protractor-advisor');
+var protractorQA = require('gulp-protractor-qa');
 
 gulp.task('default', function () {
 	gulp.src('tests/*-spec.js')
-		.pipe(protractorAdvisor());
+		.pipe(protractorQA());
 });
 ```
 
 
 ## API
 
-### protractorAdvisor(options)
+### protractorQA(options)
 
 #### options
 

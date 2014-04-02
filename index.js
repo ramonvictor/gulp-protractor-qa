@@ -1,7 +1,7 @@
 var through = require('through2');
 var gutil = require('gulp-util');
 
-const PLUGIN_NAME = 'gulp-protractor-advisor';
+const PLUGIN_NAME = 'gulp-protractor-qa';
 
 
 function gulpProtractorAdvisor() {

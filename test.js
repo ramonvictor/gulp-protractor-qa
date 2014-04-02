@@ -1,10 +1,10 @@
 'use strict';
 // var assert = require('assert');
 // var gutil = require('gulp-util');
-// var protractorAdvisor = require('./index');
+// var protractorQA = require('./index');
 
 // it('should ', function (cb) {
-// 	var stream = protractorAdvisor();
+// 	var stream = protractorQA();
 
 // 	stream.on('data', function (file) {
 // 		assert.equal(file.relative, 'file.ext');
