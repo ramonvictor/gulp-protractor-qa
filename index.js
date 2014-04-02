@@ -1,30 +1,40 @@
-'use strict';
-var gutil = require('gulp-util');
 var through = require('through2');
-var module = require('module');
+var gutil = require('gulp-util');
 
-module.exports = function(options) {
-	var options = options || {};
-	return through.obj(function (file, enc, cb) {
+const PLUGIN_NAME = 'gulp-protractor-advisor';
 
+
+function gulpProtractorAdvisor() {
+
+  // Creating a stream through which each file will pass
+  var stream = through.obj(function(file, enc, cb) {
+		
 		if (file.isNull()) {
 			this.push(file);
 			return cb();
 		}
 
 		if (file.isStream()) {
-			this.emit('error', new gutil.PluginError('gulp-protractor-advisor', 'Streaming not supported'));
+			this.emit('error', new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
 			return cb();
 		}
 
-		try {
-			file.contents = file.contents.toString();
-			console.log( file.contents );
-		} catch (err) {
-			this.emit('error', new gutil.PluginError('gulp-protractor-advisor', err));
+		var str = file.contents.toString('utf8');
+
+		// regex
+		var re = /by\.model\('(.*?)'\)/gi;
+		var results;
+		while ((results = re.exec(str)) !== null)
+		{
+		  console.log(results[1]);
 		}
 
-		this.push(file);
 		cb();
-	});
+  });
+
+  // returning the file stream
+  return stream;
 };
+
+// Exporting the plugin main function
+module.exports = gulpProtractorAdvisor;

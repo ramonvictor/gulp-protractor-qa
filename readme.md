@@ -39,4 +39,4 @@ Lorem ipsum.
 
 ## License
 
-MIT © [<%= name %>](https://github.com/<%= githubUsername %>)
+MIT © [Ramon Victor](https://github.com/ramonvictor)

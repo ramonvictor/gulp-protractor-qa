@@ -17,6 +17,7 @@
   },
   "main": "index.js",
   "keywords": [
+    "gulpplugin",
     "protractor",
     "e2e",
     "tests"
