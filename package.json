@@ -24,9 +24,17 @@
   ],
   "dependencies": {
     "gulp-util": "~2.2.14",
-    "through2": "~0.4.1"
+    "vinyl-fs": "*",
+    "event-stream": "*",
+    "chalk" : "*",
+    "gaze" : "*"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "gulp-util": "~2.2.14",
+    "vinyl-fs": "*",
+    "event-stream": "*",
+    "chalk" : "*",
+    "gaze" : "*"
   }
 }
