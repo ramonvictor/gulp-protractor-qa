@@ -1,6 +1,6 @@
 # [gulp](http://gulpjs.com)-protractor-qa
 
-> A gulp plugin to help you avoiding broken Protractor tests due to not found element() selectos.
+> A gulp plugin to help you avoiding broken Protractor tests due to not found element() selectors.
 
 
 ## Install
