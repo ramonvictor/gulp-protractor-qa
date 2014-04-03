@@ -41,13 +41,19 @@ gulp.task('default', function() {
 
 #### options
 
-##### watchViewSrc
+##### testSrc
 
 Type: `String`  
 Default: `""`
 
-Inform the view root folder. Where your angular html templates are located.
-i.e: `watchViewSrc : "view/*.html"`
+Where the plugin should watch the changes in order to map all the element() index.
+
+##### viewSrc
+
+Type: `String`  
+Default: `""`
+
+Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all the element() selectors can be find.
 
 
 ## License
