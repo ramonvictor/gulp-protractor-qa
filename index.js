@@ -1,7 +1,7 @@
 var gutil = require('gulp-util');
 var fs = require('vinyl-fs');
 var es = require('event-stream');
-// var notify = require('gulp-notify');
+var chalk = require('chalk');
 var Gaze = require('gaze').Gaze;
 
 const PLUGIN_NAME = 'gulp-protractor-qa';
@@ -66,9 +66,11 @@ var gulpProtractorAdvisor = {
 		// reset foundItems
 		this.ptorFindElements.foundItems = [];
 		// map protractor elements
-		this.mapPtorElements(this.testFiles)
+		this.mapPtorElements(this.testFiles);
 	},
 	verifyViewMatches : function( foundItems ){
+
+		var allElementFound = true;
 
 		for(var i = 0; i<foundItems.length; i++ ){
 
@@ -83,11 +85,15 @@ var gulpProtractorAdvisor = {
 				}
 			}
 
-			if( !found ){
-				var errMsgn = PLUGIN_NAME + ': "' + currentItem + '" not found in view files!';
-				console.warn(errMsgn);
+			if( !found ){ 
+				allElementFound = false;
+				gutil.log('[' + chalk.blue(PLUGIN_NAME) + '] "' + chalk.red(currentItem) + '" not found in view files!' );
 			}
 
+		}
+
+		if(allElementFound){
+			gutil.log('[' + chalk.blue(PLUGIN_NAME) + '] ' + chalk.green("all test element found!") );
 		}
 	}
 
@@ -162,6 +168,8 @@ gulpProtractorAdvisor.init = function( options ){
 			);
 	});
 	
+	// fire protractor-qa init function
+	// globals.mapPtorElements(globals.testFiles);
 
 };
 
