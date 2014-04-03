@@ -29,9 +29,7 @@ gulp.task('protractor-qa', function() {
 
 Running it
 ```js
-gulp.task('default', function() {   
-    gulp.run('protractor-qa');
-});
+gulp.task('default', ['protractor-qa']);
 ```
 
 
