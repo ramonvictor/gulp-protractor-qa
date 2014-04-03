@@ -1,6 +1,7 @@
 var gutil = require('gulp-util');
 var fs = require('vinyl-fs');
 var es = require('event-stream');
+// var notify = require('gulp-notify');
 var Gaze = require('gaze').Gaze;
 
 const PLUGIN_NAME = 'gulp-protractor-qa';
@@ -33,8 +34,8 @@ var gulpProtractorAdvisor = {
 			var obj = updatedTestFiles[i];
 			this.findElementMatches(obj.contents);
 		}
-		// prints all the found itens
-		console.log( this.ptorFindElements.foundItems );
+		
+		this.verifyViewMatches( this.ptorFindElements.foundItems );
 	},
 	updateContent : function( collection, filepath, newContent ){
 		
@@ -50,11 +51,46 @@ var gulpProtractorAdvisor = {
 			}
 		}
 
+		if(collection === "viewSrc"){
+			for(var i = 0; i<this.viewFiles.length; i++ ){
+				var obj = this.viewFiles[i];
+			    if(typeof obj.path != 'undefined'){
+			       	if( obj.path == filepath ){
+			       		obj.contents = newContent;
+			       		break;
+			       	}
+			    }
+			}
+		}
+
 		// reset foundItems
 		this.ptorFindElements.foundItems = [];
 		// map protractor elements
 		this.mapPtorElements(this.testFiles)
+	},
+	verifyViewMatches : function( foundItems ){
+
+		for(var i = 0; i<foundItems.length; i++ ){
+
+			var found = false;
+			var currentItem = foundItems[i];
+
+
+			for(var c = 0; c<this.viewFiles.length; c++ ){
+				var obj = this.viewFiles[c];
+				if( obj.contents.indexOf( currentItem ) >= 0 ){
+					found = true;
+				}
+			}
+
+			if( !found ){
+				var errMsgn = PLUGIN_NAME + ': "' + currentItem + '" not found in view files!';
+				console.warn(errMsgn);
+			}
+
+		}
 	}
+
 };
 
 gulpProtractorAdvisor.init = function( options ){
@@ -87,13 +123,41 @@ gulpProtractorAdvisor.init = function( options ){
 		);
 
 	// watch test files changes
-	var gaze = new Gaze(globals.options.testSrc);
-	gaze.on('all', function(event, filepath) { 
+	var gazeTests = new Gaze(globals.options.testSrc);
+	gazeTests.on('all', function(event, filepath) { 
 		fs.src(filepath)
 			.pipe(
 				es.map(function(file, cb){ 
 					var str = file.contents.toString('utf8');
 					globals.updateContent("testSrc", filepath, str);
+				})
+			);
+	});
+
+	// loop all html files and store its content
+	fs.src(globals.options.viewSrc)
+		.pipe(
+			es.map(function(file, cb){ 
+				var str = file.contents.toString('utf8');
+
+				globals.viewFiles.push(
+					{
+						path : file.path,
+						contents : str
+					}
+				);
+
+			})
+		);
+
+	// watch html files changes
+	var gazeViews = new Gaze(globals.options.viewSrc);
+	gazeViews.on('all', function(event, filepath) { 
+		fs.src(filepath)
+			.pipe(
+				es.map(function(file, cb){ 
+					var str = file.contents.toString('utf8');
+					globals.updateContent("viewSrc", filepath, str);
 				})
 			);
 	});
