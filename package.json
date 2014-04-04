@@ -24,15 +24,15 @@
   ],
   "dependencies": {
     "gulp-util": "~2.2.14",
-    "fs" : "*",
     "chalk" : "*",
+    "cheerio" : "*",
     "gaze" : "*",
     "glob" : "*"
   },
   "devDependencies": {
     "gulp-util": "~2.2.14",
-    "fs" : "*",
     "chalk" : "*",
+    "cheerio" : "*",
     "gaze" : "*",
     "glob" : "*"
   }

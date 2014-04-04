@@ -3,11 +3,10 @@ var fs = require('fs');
 var chalk = require('chalk');
 var Gaze = require('gaze').Gaze;
 var glob = require("glob");
-
+var cheerio = require('cheerio');
 
 
 const PLUGIN_NAME = 'gulp-protractor-qa';
-
 
 var gulpProtractorAdvisor = {
 	testFiles : [],
@@ -15,8 +14,14 @@ var gulpProtractorAdvisor = {
 	
 	ptorFindElements : {
 		regex : [ 
-			/by\.model\(\s*'(.*)'\s*\)/gi,
-			/by\.repeater\(\s*'(.*)'\s*\)/gi
+			{
+				htmlRel : "ng-model",
+				match : /by\.model\(\s*'(.*)'\s*\)/gi
+			},
+			{
+				htmlRel : "ng-repeat",
+				match : /by\.repeater\(\s*'(.*)'\s*\)/gi
+			}
 		],
 		foundItems : []
 	},
@@ -27,9 +32,15 @@ var gulpProtractorAdvisor = {
 		// lopp regexlist
 		for(var i = 0; i<regexList.length; i++ ){
 			// verify matches
-			while ((results = regexList[i].exec(contents)) !== null)
+			while ((results = regexList[i].match.exec(contents)) !== null)
 			{
-				  this.ptorFindElements.foundItems.push(results[1]);
+				var res = {
+					at : results[0],
+					val : results[1],
+					htmlRel : regexList[i].htmlRel
+				};
+				
+				this.ptorFindElements.foundItems.push( res );
 			}
 		}
 	},
@@ -70,20 +81,21 @@ var gulpProtractorAdvisor = {
 		for(var i = 0; i<foundItems.length; i++ ){
 
 			var found = false;
-			var currentItem = foundItems[i];
-
+			var foundItem = foundItems[i];
 
 			for(var c = 0; c < this.viewFiles.length; c++ ){
 				var obj = this.viewFiles[c];
-				// TODO: https://github.com/MatthewMueller/cheerio
-				if( obj.contents.indexOf( currentItem ) >= 0 ){
+				
+				$ = cheerio.load( obj.contents );
+				var selector = [ '[', foundItem.htmlRel, '="', foundItem.val,'"]' ].join("");
+				if( $( selector ).length ){
 					found = true;
 				}
 			}
 
 			if( !found ){ 
 				allElementFound = false;
-				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] "' + chalk.red(currentItem) + '" not found in view files!' );
+				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' not found in view files!' );
 			}
 
 		}
@@ -117,10 +129,6 @@ var gulpProtractorAdvisor = {
 			});
 		};
 
-		var finished = function finished() { 
-			_cb();
-		};
-
 		glob(src, function (er, files) {
 				files.forEach(function(item) {
 					async(item, function(filePath, data){
@@ -132,8 +140,8 @@ var gulpProtractorAdvisor = {
 							}
 						);
 
-					    if(_this[ collection ].length == files.length) {
-					      finished();
+					    if( _this[ collection ].length == files.length ) {
+					      _cb();
 					    }
 					  })
 				});
