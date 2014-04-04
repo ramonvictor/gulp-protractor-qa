@@ -16,11 +16,11 @@ var gulpProtractorAdvisor = {
 		regex : [ 
 			{
 				htmlRel : "ng-model",
-				match : /by\.model\(\s*'(.*)'\s*\)/gi
+				match : /by\.model\(\s*'(.*?)'\s*\)/gi
 			},
 			{
 				htmlRel : "ng-repeat",
-				match : /by\.repeater\(\s*'(.*)'\s*\)/gi
+				match : /by\.repeater\(\s*'(.*?)'\s*\)/gi
 			}
 		],
 		foundItems : []
