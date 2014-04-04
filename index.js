@@ -75,6 +75,7 @@ var gulpProtractorAdvisor = {
 
 			for(var c = 0; c < this.viewFiles.length; c++ ){
 				var obj = this.viewFiles[c];
+				// TODO: https://github.com/MatthewMueller/cheerio
 				if( obj.contents.indexOf( currentItem ) >= 0 ){
 					found = true;
 				}
