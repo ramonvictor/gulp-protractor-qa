@@ -19,6 +19,7 @@
   "keywords": [
     "gulpplugin",
     "protractor",
+    "webdriver",
     "e2e",
     "tests"
   ],
