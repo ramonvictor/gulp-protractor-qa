@@ -15,13 +15,25 @@ var gulpProtractorAdvisor = {
 	ptorFindElements : {
 		regex : [ 
 			{
-				htmlRel : "ng-model",
-				match : /by\.model\(\s*'(.*?)'\s*\)/gi
+				type : "attr",
+				attrName : "ng-model",
+				match :  /[b|B]y\.model\(\s*['|"](.*?)['|"]\s*\)/gi
 			},
 			{
-				htmlRel : "ng-repeat",
-				match : /by\.repeater\(\s*'(.*?)'\s*\)/gi
+				type : "attr",
+				attrName : "ng-repeat",
+				match : /[b|B]y\.repeater\(\s*['|"](.*?)['|"]\s*\)/gi
+			},
+			{
+				type : "cssAttr", 
+				match : /[b|B]y\.css\(['|"][\[^ng-](.*?)\]['|"]\)/gi
+			},
+			{
+				type : "attr", 
+				attrName : "ng-bind",
+				match : /[b|B]y\.binding\(\s*['|"](.*?)['|"]\s*\)/gi
 			}
+
 		],
 		foundItems : []
 	},
@@ -37,13 +49,15 @@ var gulpProtractorAdvisor = {
 				var res = {
 					at : results[0],
 					val : results[1],
-					htmlRel : regexList[i].htmlRel
+					type : regexList[i].type,
+					attrName : regexList[i].attrName
 				};
 				
 				this.ptorFindElements.foundItems.push( res );
 			}
 		}
 	},
+
 
 	mapPtorElements : function( updatedTestFiles ){
 		for(var i = 0; i<updatedTestFiles.length; i++ ){
@@ -60,7 +74,7 @@ var gulpProtractorAdvisor = {
 		for(var i = 0; i < _this[ collection ].length; i++ ){
 			var obj = _this[ collection ][i];
 		    if(typeof obj.path != 'undefined'){
-		       	if( filepath.indexOf(obj.path) >= 0 ){
+		       	if( filepath.indexOf( obj.path.replace("./", "/") ) >= 0 ){
 		       		obj.contents = newContent;
 		       		break;
 		       	}
@@ -74,9 +88,24 @@ var gulpProtractorAdvisor = {
 		_this.mapPtorElements( _this.testFiles );
 	},
 
+	bindExists : function( bind, contents ){
+		var results,
+			exists = false,
+			pattern =  /{{(.*?)}}/gi;
+
+		while ( (results = pattern.exec(contents)) !== null){
+			if( results[1].indexOf( bind ) >= 0 ){
+				exists = true;
+			}
+		}
+		
+		return exists;
+	},
+
 	verifyViewMatches : function( foundItems ){
 
-		var allElementFound = true;
+		var _this = this,
+			allElementsFound = true;
 
 		for(var i = 0; i<foundItems.length; i++ ){
 
@@ -87,20 +116,35 @@ var gulpProtractorAdvisor = {
 				var obj = this.viewFiles[c];
 				
 				$ = cheerio.load( obj.contents );
-				var selector = [ '[', foundItem.htmlRel, '="', foundItem.val,'"]' ].join("");
+				var selector = '';
+
+				if( foundItem.type === "attr" ){
+				 	selector = [ '[', foundItem.attrName, '="', foundItem.val,'"]' ].join("");
+
+				 	if( foundItem.attrName === "ng-bind"){
+				 		// search for {{bindings}}
+				 		if( _this.bindExists( foundItem.val, obj.contents ) ){
+				 			found = true;
+				 		}
+				 	}
+
+				} else if( foundItem.type === "cssAttr" ){
+					selector = [ '[', foundItem.val, ']' ].join("");
+				}
+
 				if( $( selector ).length ){
 					found = true;
 				}
 			}
 
 			if( !found ){ 
-				allElementFound = false;
+				allElementsFound = false;
 				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' not found in view files!' );
 			}
 
 		}
 
-		if(allElementFound){
+		if(allElementsFound){
 			gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.green("all test element found!") );
 		}
 	},
@@ -115,7 +159,7 @@ var gulpProtractorAdvisor = {
 		var gaze = new Gaze(src);
 		gaze.on('all', function(event, filepath) { 
 			fs.readFile(filepath, 'utf8', function(err, data){
-				if (err) throw err;
+				if (err) { throw err };
 				_this.updateContent(collection, filepath, data);
 			});
 		});
@@ -124,7 +168,7 @@ var gulpProtractorAdvisor = {
 		// async map file contents
 		var async = function async(arg, callback) {
 		  	fs.readFile(arg, 'utf8', function (err, data) {
-			    if (err) throw err;
+			    if (err) { throw err };
 				callback(arg, data);
 			});
 		};
@@ -152,7 +196,7 @@ var gulpProtractorAdvisor = {
 	populateFilesContent : function( _callback ){
 		
 		var _this = this;
-		// popuplate files, then fire callback
+
 		_this.populateFiles( _this.options.testSrc, "testFiles", function(){
 			_this.populateFiles( _this.options.viewSrc, "viewFiles", function(){
 				_callback();
