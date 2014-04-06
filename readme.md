@@ -56,7 +56,7 @@ Where the plugin should watch the changes in order to map all the element() inde
 Type: `String`  
 Default: `""`
 
-Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all the element() selectors can be find.
+Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all the `element()` selectors can be find.
 
 ## Changelog
 
