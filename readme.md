@@ -67,7 +67,7 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 - Other code improvements;
 
 ### 0.1.0
-- Mapping just the two `element()` selectors: `by.model()` and `by.repeater()`;
+- Mapping just two `element()` selectors: `by.model()` and `by.repeater()`;
 
 
 ## License
