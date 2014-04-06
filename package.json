@@ -1,6 +1,6 @@
 {
   "name": "gulp-protractor-qa",
-  "version": "0.1.03",
+  "version": "0.1.04",
   "description": "A gulp plugin to help avoiding broken Protractor tests due to not found element() selectos.",
   "license": "MIT",
   "repository": "ramonvictor/gulp-protractor-qa",
@@ -27,14 +27,12 @@
     "gulp-util": "~2.2.14",
     "chalk" : "*",
     "cheerio" : "*",
-    "gaze" : "*",
     "glob" : "*"
   },
   "devDependencies": {
     "gulp-util": "~2.2.14",
     "chalk" : "*",
     "cheerio" : "*",
-    "gaze" : "*",
     "glob" : "*"
   }
 }
