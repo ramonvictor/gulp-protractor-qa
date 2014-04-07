@@ -60,6 +60,12 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## Changelog
 
+### 0.1.07
+
+- Improved the error log showing in which file each wrong selector came from;
+- Improved the regex that find selectors by: `by.css('[attr-name="attr-value"]')`;
+
+
 ### 0.1.05
 
 - Mapping more `element()` selectors: `by.css('[attr-name="attr-value"]')` and `by.binding()`;

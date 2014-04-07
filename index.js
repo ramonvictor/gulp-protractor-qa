@@ -51,7 +51,7 @@ var gulpProtractorAdvisor = {
 					val : results[1],
 					type : regexList[i].type,
 					attrName : regexList[i].attrName,
-					path : path
+					fileName : path
 				};
 				
 				_this.ptorFindElements.foundList.push( res );
@@ -141,7 +141,7 @@ var gulpProtractorAdvisor = {
 
 			if( !found ){ 
 				allElementsFound = false;
-				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' at ' + chalk.bold(foundItem.path)  + ' not found in view files!' );
+				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' at ' + chalk.bold(foundItem.fileName)  + ' not found in view files!' );
 			}
 
 		}
