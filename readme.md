@@ -62,7 +62,7 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ### 0.1.05
 
-- Mapping more `element()` selectors: `by.css('[ng-*="*"]')` and `by.binding()`;
+- Mapping more `element()` selectors: `by.css('[attr-name="attr-value"]')` and `by.binding()`;
 - Improve regex rules to support both: `protractor.By` and `by.`;
 - Other code improvements;
 
