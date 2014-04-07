@@ -12,16 +12,14 @@
   "engines": {
     "node": ">=0.10.0"
   },
-  "scripts": {
-    "test": "mocha"
-  },
   "main": "index.js",
   "keywords": [
     "gulpplugin",
     "protractor",
     "webdriver",
     "e2e",
-    "tests"
+    "tests",
+    "angularjs"
   ],
   "dependencies": {
     "gulp-util": "~2.2.14",
