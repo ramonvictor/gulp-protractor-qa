@@ -5,7 +5,6 @@ var Gaze = require('gaze').Gaze;
 var glob = require("glob");
 var cheerio = require('cheerio');
 
-
 const PLUGIN_NAME = 'gulp-protractor-qa';
 
 var gulpProtractorAdvisor = {
@@ -35,10 +34,10 @@ var gulpProtractorAdvisor = {
 			}
 
 		],
-		foundItems : []
+		foundList : []
 	},
 
-	findElementMatches : function( contents ){
+	findDotByMatches : function( path, contents ){
 		var results,
 			regexList = this.ptorFindElements.regex;
 		// lopp regexlist
@@ -50,21 +49,22 @@ var gulpProtractorAdvisor = {
 					at : results[0],
 					val : results[1],
 					type : regexList[i].type,
-					attrName : regexList[i].attrName
+					attrName : regexList[i].attrName,
+					path : path
 				};
 				
-				this.ptorFindElements.foundItems.push( res );
+				this.ptorFindElements.foundList.push( res );
 			}
 		}
 	},
 
 
-	mapPtorElements : function( updatedTestFiles ){
+	searchProtractorDotByContents : function( updatedTestFiles ){
 		for(var i = 0; i<updatedTestFiles.length; i++ ){
 			var obj = updatedTestFiles[i];
-			this.findElementMatches(obj.contents);
+			this.findDotByMatches(obj.path, obj.contents);
 		}
-		this.verifyViewMatches( this.ptorFindElements.foundItems );
+		this.verifyViewMatches( this.ptorFindElements.foundList );
 	},
 
 	updateContent : function( collection, filepath, newContent ){
@@ -81,11 +81,11 @@ var gulpProtractorAdvisor = {
 		    }
 		}
 
-		// reset foundItems
-		_this.ptorFindElements.foundItems = [];
+		// reset foundList
+		_this.ptorFindElements.foundList = [];
 
 		// map protractor elements
-		_this.mapPtorElements( _this.testFiles );
+		_this.searchProtractorDotByContents( _this.testFiles );
 	},
 
 	bindExists : function( bind, contents ){
@@ -102,15 +102,15 @@ var gulpProtractorAdvisor = {
 		return exists;
 	},
 
-	verifyViewMatches : function( foundItems ){
+	verifyViewMatches : function( foundList ){
 
 		var _this = this,
 			allElementsFound = true;
 
-		for(var i = 0; i<foundItems.length; i++ ){
+		for(var i = 0; i<foundList.length; i++ ){
 
 			var found = false;
-			var foundItem = foundItems[i];
+			var foundItem = foundList[i];
 
 			for(var c = 0; c < this.viewFiles.length; c++ ){
 				var obj = this.viewFiles[c];
@@ -139,7 +139,7 @@ var gulpProtractorAdvisor = {
 
 			if( !found ){ 
 				allElementsFound = false;
-				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' not found in view files!' );
+				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' at ' + chalk.bold(foundItem.path)  + ' not found in view files!' );
 			}
 
 		}
@@ -149,7 +149,7 @@ var gulpProtractorAdvisor = {
 		}
 	},
 
-	populateFiles : function( src, collection, _cb ){
+	storeFileContents : function( src, collection, _cb ){
 
 		var _this = this;
 
@@ -193,12 +193,12 @@ var gulpProtractorAdvisor = {
 
 	},
 
-	populateFilesContent : function( _callback ){
+	bindStoreFileContents : function( _callback ){
 		
 		var _this = this;
 
-		_this.populateFiles( _this.options.testSrc, "testFiles", function(){
-			_this.populateFiles( _this.options.viewSrc, "viewFiles", function(){
+		_this.storeFileContents( _this.options.testSrc, "testFiles", function(){
+			_this.storeFileContents( _this.options.viewSrc, "viewFiles", function(){
 				_callback();
 			});
 		});
@@ -219,8 +219,8 @@ gulpProtractorAdvisor.init = function( options ){
 		throw new gutil.PluginError(PLUGIN_NAME, '`viewSrc` viewSrc!');
 	}
 
-	globals.populateFilesContent(function(){
-		globals.mapPtorElements(globals.testFiles);
+	globals.bindStoreFileContents(function(){
+		globals.searchProtractorDotByContents(globals.testFiles);
 	});
 	
 };
