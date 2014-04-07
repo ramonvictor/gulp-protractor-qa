@@ -38,8 +38,9 @@ var gulpProtractorAdvisor = {
 	},
 
 	findDotByMatches : function( path, contents ){
-		var results,
-			regexList = this.ptorFindElements.regex;
+		var _this = this,
+			results,
+			regexList = _this.ptorFindElements.regex;
 		// lopp regexlist
 		for(var i = 0; i<regexList.length; i++ ){
 			// verify matches
@@ -53,18 +54,19 @@ var gulpProtractorAdvisor = {
 					path : path
 				};
 				
-				this.ptorFindElements.foundList.push( res );
+				_this.ptorFindElements.foundList.push( res );
 			}
 		}
 	},
 
 
 	searchProtractorDotByContents : function( updatedTestFiles ){
+		var _this = this;
 		for(var i = 0; i<updatedTestFiles.length; i++ ){
 			var obj = updatedTestFiles[i];
-			this.findDotByMatches(obj.path, obj.contents);
+			_this.findDotByMatches(obj.path, obj.contents);
 		}
-		this.verifyViewMatches( this.ptorFindElements.foundList );
+		_this.verifyViewMatches( _this.ptorFindElements.foundList );
 	},
 
 	updateFileContents : function( collection, filepath, newContent ){
@@ -112,8 +114,8 @@ var gulpProtractorAdvisor = {
 			var found = false;
 			var foundItem = foundList[i];
 
-			for(var c = 0; c < this.viewFiles.length; c++ ){
-				var obj = this.viewFiles[c];
+			for(var c = 0; c < _this.viewFiles.length; c++ ){
+				var obj = _this.viewFiles[c];
 				
 				$ = cheerio.load( obj.contents );
 				var selector = '';
