@@ -25,7 +25,7 @@ var gulpProtractorAdvisor = {
 			},
 			{
 				type : "cssAttr", 
-				match : /[b|B]y\.css\(['|"][\[^ng-](.*?)\]['|"]\)/gi
+				match : /[b|B]y\.css\(['|"]\[(.+=.+)\]['|"]\)/gi
 			},
 			{
 				type : "attr", 
