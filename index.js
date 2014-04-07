@@ -67,7 +67,7 @@ var gulpProtractorAdvisor = {
 		this.verifyViewMatches( this.ptorFindElements.foundList );
 	},
 
-	updateContent : function( collection, filepath, newContent ){
+	updateFileContents : function( collection, filepath, newContent ){
 
 		var _this = this;
 
@@ -160,7 +160,7 @@ var gulpProtractorAdvisor = {
 		gaze.on('all', function(event, filepath) { 
 			fs.readFile(filepath, 'utf8', function(err, data){
 				if (err) { throw err };
-				_this.updateContent(collection, filepath, data);
+				_this.updateFileContents(collection, filepath, data);
 			});
 		});
 
