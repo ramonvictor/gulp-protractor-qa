@@ -29,12 +29,5 @@
     "chalk" : "*",
     "cheerio" : "*",
     "glob" : "*"
-  },
-  "devDependencies": {
-    "gulp-util": "~2.2.14",
-    "gaze" : "*",
-    "chalk" : "*",
-    "cheerio" : "*",
-    "glob" : "*"
   }
 }
