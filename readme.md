@@ -4,7 +4,7 @@ A gulp plugin to help you avoiding broken Protractor tests due to not found `ele
 
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/gulp-protractor-qa.gif" alt="Video screen demo of gulp-protractor-qa in action!">
 
-> This is a beta version. From now, it's just mapping the following `element()` selectors: `by.model()`, `by.binding()`, `by.css('[ng-*="*"]')` and `by.repeater()`.
+> This is a beta version. From now, it's just mapping the following `element()` selectors: `by.model()`, `by.binding()`, `by.css('[attr-name="attr-value"]')` and `by.repeater()`.
 This project is for the community, so please: test it, open [issues](https://github.com/ramonvictor/gulp-protractor-qa/issues), [fork it](https://github.com/ramonvictor/gulp-protractor-qa/) and if you like, give it a start! :) 
 Help me make [gulp-protractor-qa](https://www.npmjs.org/package/gulp-protractor-qa) an awesome tool! 
 
