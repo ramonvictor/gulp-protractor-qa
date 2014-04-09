@@ -2,7 +2,7 @@ var gutil = require('gulp-util');
 var fs = require('fs');
 var chalk = require('chalk');
 var Gaze = require('gaze').Gaze;
-var glob = require("glob");
+var glob = require("buster-glob");
 var cheerio = require('cheerio');
 
 const PLUGIN_NAME = 'gulp-protractor-qa';
@@ -175,7 +175,7 @@ var gulpProtractorAdvisor = {
 			});
 		};
 
-		glob(src, function (er, files) {
+		glob.glob(src, function (er, files) {
 				files.forEach(function(item) {
 					async(item, function(filePath, data){
 					    

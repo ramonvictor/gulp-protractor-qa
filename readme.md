@@ -46,19 +46,22 @@ gulp.task('default', ['protractor-qa']);
 
 ##### testSrc
 
-Type: `String`  
+Type: `String` or `Array`
 Default: `""`
 
 Where the plugin should watch the changes in order to map all the `element()` index.
 
 ##### viewSrc
 
-Type: `String`  
+Type: `String` or `Array`
 Default: `""`
 
 Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all the `element()` selectors can be find.
 
 ## Changelog
+
+### 0.1.08
+- `testSrc` and `viewSrc` now receive string or array value;
 
 ### 0.1.07
 
