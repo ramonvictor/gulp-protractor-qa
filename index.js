@@ -42,7 +42,7 @@ var gulpProtractorAdvisor = {
 			results,
 			regexList = _this.ptorFindElements.regex;
 		// lopp regexlist
-		for(var i = 0; i<regexList.length; i++ ){
+		for( var i = 0; i<regexList.length; i++ ){
 			// verify matches
 			while ((results = regexList[i].match.exec(contents)) !== null)
 			{
@@ -62,7 +62,7 @@ var gulpProtractorAdvisor = {
 
 	searchProtractorDotByContents : function( updatedTestFiles ){
 		var _this = this;
-		for(var i = 0; i<updatedTestFiles.length; i++ ){
+		for( var i = 0; i<updatedTestFiles.length; i++ ){
 			var obj = updatedTestFiles[i];
 			_this.findDotByMatches(obj.path, obj.contents);
 		}
@@ -73,9 +73,9 @@ var gulpProtractorAdvisor = {
 
 		var _this = this;
 
-		for(var i = 0; i < _this[ collection ].length; i++ ){
+		for( var i = 0; i < _this[ collection ].length; i++ ){
 			var obj = _this[ collection ][i];
-		    if(typeof obj.path != 'undefined'){
+		    if( typeof obj.path != 'undefined' ){
 		       	if( filepath.indexOf( obj.path.replace("./", "/") ) >= 0 ){
 		       		obj.contents = newContent;
 		       		break;
@@ -95,7 +95,7 @@ var gulpProtractorAdvisor = {
 			exists = false,
 			pattern =  /{{(.*?)}}/gi;
 
-		while ( (results = pattern.exec(contents)) !== null){
+		while ( (results = pattern.exec(contents)) !== null ){
 			if( results[1].indexOf( bind ) >= 0 ){
 				exists = true;
 			}
@@ -109,7 +109,7 @@ var gulpProtractorAdvisor = {
 		var _this = this,
 			allElementsFound = true;
 
-		for(var i = 0; i<foundList.length; i++ ){
+		for( var i = 0; i<foundList.length; i++ ){
 
 			var found = false;
 			var foundItem = foundList[i];
@@ -123,7 +123,7 @@ var gulpProtractorAdvisor = {
 				if( foundItem.type === "attr" ){
 				 	selector = [ '[', foundItem.attrName, '="', foundItem.val,'"]' ].join("");
 
-				 	if( foundItem.attrName === "ng-bind"){
+				 	if( foundItem.attrName === "ng-bind" ){
 				 		// search for {{bindings}}
 				 		if( _this.bindExists( foundItem.val, obj.contents ) ){
 				 			found = true;
@@ -146,7 +146,7 @@ var gulpProtractorAdvisor = {
 
 		}
 
-		if(allElementsFound){
+		if( allElementsFound ){
 			gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.green("all test element found!") );
 		}
 	},
@@ -189,7 +189,7 @@ var gulpProtractorAdvisor = {
 					    if( _this[ collection ].length == files.length ) {
 					      _cb();
 					    }
-					  })
+					});
 				});
 		});
 
