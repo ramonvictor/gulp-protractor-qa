@@ -75,6 +75,14 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 ### 0.1.0
 - Mapping just two `element()` selectors: `by.model()` and `by.repeater()`;
 
+## Author
+<table>
+<tr>
+<td><a href="https://github.com/ramonvictor">
+<img src="https://avatars3.githubusercontent.com/u/1021972?s=35" alt="Ramon Victor" /></a></td>
+<td><a href="https://github.com/ramonvictor">Ramon Victor</a></td>
+</tr>
+</table>
 
 ## License
 
