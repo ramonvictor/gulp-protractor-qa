@@ -36,7 +36,7 @@ Running it
 ```js
 gulp.task('default', ['protractor-qa']);
 ```
-
+[See final gulpfile.js example](/gulpfile.js).
 
 ## API
 
