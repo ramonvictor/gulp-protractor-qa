@@ -36,7 +36,7 @@ Running it
 ```js
 gulp.task('default', ['protractor-qa']);
 ```
-[See final gulpfile.js example](https://github.com/ramonvictor/gulp-protractor-qa/blob/master/gulpfile.js).
+[See final gulpfile.js example](https://github.com/ramonvictor/gulp-protractor-qa/blob/master/assets/gulpfile.js).
 
 ## API
 
@@ -61,7 +61,7 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 ## Changelog
 
 ### 0.1.08
-- `testSrc` and `viewSrc` now receive string or array value;
+- `testSrc` and `viewSrc` now receive `string` or `array` value;
 
 ### 0.1.07
 
