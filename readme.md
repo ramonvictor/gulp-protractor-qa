@@ -27,7 +27,7 @@ Registering the task
 gulp.task('protractor-qa', function() {
     protractorQA.init({
         testSrc : 'test/e2e/**/*Spec.js',
-        viewSrc : 'partials/*.html'
+        viewSrc : [ 'index.html', 'partials/*.html' ]
     });
 });
 ```
@@ -60,7 +60,7 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## Changelog
 
-### 0.1.09
+### 0.1.10
 - `testSrc` and `viewSrc` now receive `string` or `array` value;
 
 ### 0.1.07
@@ -77,15 +77,6 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ### 0.1.0
 - Mapping just two `element()` selectors: `by.model()` and `by.repeater()`;
-
-## Author
-<table>
-<tr>
-<td><a href="https://github.com/ramonvictor">
-<img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/ramonvictor.jpeg" alt="Ramon Victor" /></a></td>
-<td><a href="https://github.com/ramonvictor">Ramon Victor</a></td>
-</tr>
-</table>
 
 ## License
 

@@ -5,7 +5,7 @@ var gulp = require('gulp'),
 gulp.task('protractor-qa', function() {
     protractorQA.init({
         testSrc : 'test/e2e/**/*Spec.js',
-        viewSrc : 'partials/*.html'
+        viewSrc : [ 'index.html', 'partials/*.html' ]
     });
 });
 
