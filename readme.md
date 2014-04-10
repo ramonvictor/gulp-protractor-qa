@@ -82,7 +82,7 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 <table>
 <tr>
 <td><a href="https://github.com/ramonvictor">
-<img src="https://avatars3.githubusercontent.com/u/1021972?s=35" alt="Ramon Victor" /></a></td>
+<img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/ramonvictor.jpeg" alt="Ramon Victor" /></a></td>
 <td><a href="https://github.com/ramonvictor">Ramon Victor</a></td>
 </tr>
 </table>
