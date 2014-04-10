@@ -60,7 +60,7 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## Changelog
 
-### 0.1.08
+### 0.1.09
 - `testSrc` and `viewSrc` now receive `string` or `array` value;
 
 ### 0.1.07
