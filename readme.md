@@ -49,14 +49,14 @@ gulp.task('default', ['protractor-qa']);
 Type: `String` or `Array`
 Default: `""`
 
-Where the plugin should watch the changes in order to map all the `element()` index.
+Where the plugin should watch the changes in order to map all `element()` indexes.
 
 ##### viewSrc
 
 Type: `String` or `Array`
 Default: `""`
 
-Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all the `element()` selectors can be find.
+Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all `element()` selectors could be found.
 
 ## Changelog
 
