@@ -8,12 +8,14 @@ Keeping end-to-end test up-to-date can be really painful. Gulp Protractor QA war
 This project is for the community, so please: test it, open [issues](https://github.com/ramonvictor/gulp-protractor-qa/issues), [fork it](https://github.com/ramonvictor/gulp-protractor-qa/) and if you like, give it a start! :) 
 Help me make [gulp-protractor-qa](https://www.npmjs.org/package/gulp-protractor-qa) an awesome tool! 
 
+
+
 ## Install
 
 ```
 npm install --save-dev gulp-protractor-qa
 ```
-
+[![NPM](https://nodei.co/npm/gulp-protractor-qa.png?downloads=true)](https://nodei.co/npm/gulp-protractor-qa/)
 
 ## Example
 
