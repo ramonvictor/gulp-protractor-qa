@@ -62,20 +62,20 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## Changelog
 
-- 0.1.11: bug fix related to `gaze` version;
+- **0.1.12** bug fix related to `gaze` version;
 
-- 0.1.10: `testSrc` and `viewSrc` now receive `string` or `array` value;
+- **0.1.10** `testSrc` and `viewSrc` now receive `string` or `array` value;
 
-- 0.1.07:
-	Improved the error log showing in which file each wrong selector came from;
-	Improved the regex that find selectors by: `by.css('[attr-name="attr-value"]')`;
+- **0.1.07**
+	- Improved the error log showing in which file each wrong selector came from;
+	- Improved the regex that find selectors by: `by.css('[attr-name="attr-value"]')`;
 
-- 0.1.05: 
-	Mapping more `element()` selectors: `by.css('[attr-name="attr-value"]')` and `by.binding()`;
-	Improve regex rules to support both: `protractor.By` and `by.`;
-	Other code improvements;
+- **0.1.05**
+	- Mapping more `element()` selectors: `by.css('[attr-name="attr-value"]')` and `by.binding()`;
+	- Improve regex rules to support both: `protractor.By` and `by.`;
+	- Other code improvements;
 
-- 0.1.0: Mapping just two `element()` selectors: `by.model()` and `by.repeater()`.
+- **0.1.0** Mapping just two `element()` selectors: `by.model()` and `by.repeater()`.
 
 ## License
 
