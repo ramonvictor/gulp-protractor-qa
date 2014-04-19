@@ -4,36 +4,16 @@ var chalk = require('chalk');
 var Gaze = require('gaze').Gaze;
 var glob = require("buster-glob");
 var cheerio = require('cheerio');
+var protractorQaUtil = require('./lib/util');
 
 const PLUGIN_NAME = 'gulp-protractor-qa';
 
-var gulpProtractorAdvisor = {
+var gulpProtractorQA = {
 	testFiles : [],
 	viewFiles : [],
 	
 	ptorFindElements : {
-		regex : [ 
-			{
-				type : "attr",
-				attrName : "ng-model",
-				match :  /[b|B]y\.model\(\s*['|"](.*?)['|"]\s*\)/gi
-			},
-			{
-				type : "attr",
-				attrName : "ng-repeat",
-				match : /[b|B]y\.repeater\(\s*['|"](.*?)['|"]\s*\)/gi
-			},
-			{
-				type : "cssAttr", 
-				match : /[b|B]y\.css\(['|"]\[(.+=.+)\]['|"]\)/gi
-			},
-			{
-				type : "attr", 
-				attrName : "ng-bind",
-				match : /[b|B]y\.binding\(\s*['|"](.*?)['|"]\s*\)/gi
-			}
-
-		],
+		regex : protractorQaUtil.getRegexList(),
 		foundList : []
 	},
 
@@ -41,6 +21,7 @@ var gulpProtractorAdvisor = {
 		var _this = this,
 			results,
 			regexList = _this.ptorFindElements.regex;
+		
 		// lopp regexlist
 		for( var i = 0; i<regexList.length; i++ ){
 			// verify matches
@@ -121,7 +102,7 @@ var gulpProtractorAdvisor = {
 				var selector = '';
 
 				if( foundItem.type === "attr" ){
-				 	selector = [ '[', foundItem.attrName, '="', foundItem.val,'"]' ].join("");
+				 	selector = [ '[', foundItem.attrName, '="', foundItem.val, '"]' ].join("");
 
 				 	if( foundItem.attrName === "ng-bind" ){
 				 		// search for {{bindings}}
@@ -209,8 +190,8 @@ var gulpProtractorAdvisor = {
 
 };
 
-gulpProtractorAdvisor.init = function( options ){
-	var globals = gulpProtractorAdvisor;
+gulpProtractorQA.init = function( options ){
+	var globals = gulpProtractorQA;
 
 	globals.options = options || {};
 		
@@ -228,4 +209,4 @@ gulpProtractorAdvisor.init = function( options ){
 };
 
 // Exporting the plugin main function
-module.exports = gulpProtractorAdvisor;
+module.exports = gulpProtractorQA;
