@@ -79,4 +79,4 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## License
 
-MIT © [Ramon Victor](https://github.com/ramonvictor)
+[MIT](https://github.com/ramonvictor/gulp-protractor-qa/blob/master/license.txt) © [Ramon Victor](https://github.com/ramonvictor)
