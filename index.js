@@ -228,7 +228,7 @@ gulpProtractorQA.init = function( options ){
 
 	globals.bindStoreFileContents(function(){
 		globals.searchProtractorDotByContents(globals.testFiles, function beforeViewMatches(){
-			gutil.log( chalk.gray( " // " + globals.ptorFindElements.foundList.length + " out of " + globals.totalNumOfElements + " element selectors are been watched" ) );
+			gutil.log( '[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.gray( "// " + globals.ptorFindElements.foundList.length + " out of " + globals.totalNumOfElements + " element selectors are been watched" ) );
 		});
 	});
 	
