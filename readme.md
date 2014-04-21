@@ -63,6 +63,8 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## Changelog
 
+- **0.1.13** showing "`<number>` out of `<total>` element selectors are been watched" in the log;
+
 - **0.1.12** bug fix related to `gaze` version;
 
 - **0.1.10** `testSrc` and `viewSrc` now receive `string` or `array` value;

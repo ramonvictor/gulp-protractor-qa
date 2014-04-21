@@ -47,20 +47,27 @@ var gulpProtractorQA = {
 		var _this = this,
 			results,
 			elemRegex =  /element[\.all\(|\()]/gi;
-		
+
 		while ((results = elemRegex.exec(contents)) !== null) {
 			_this.totalNumOfElements = _this.totalNumOfElements + 1;
 		}
 
 	},
 
-	searchProtractorDotByContents : function( updatedTestFiles ){
+	searchProtractorDotByContents : function( updatedTestFiles, beforeViewMatches ){
 		var _this = this;
 		for( var i = 0; i<updatedTestFiles.length; i++ ){
 			var obj = updatedTestFiles[i];
 			_this.findDotByMatches(obj.path, obj.contents);
 			_this.elementsCount( obj.contents );
 		}
+
+		// log number of watched elements
+		if( typeof beforeViewMatches === 'function'){
+			beforeViewMatches();
+		}
+
+		// verify matches
 		_this.verifyViewMatches( _this.ptorFindElements.foundList );
 	},
 
@@ -78,7 +85,8 @@ var gulpProtractorQA = {
 		    }
 		}
 
-		// reset foundList
+		// reset foundList and totalNumOfElements
+		_this.totalNumOfElements = 0;
 		_this.ptorFindElements.foundList = [];
 
 		// map protractor elements
@@ -102,12 +110,7 @@ var gulpProtractorQA = {
 	verifyViewMatches : function( foundList ){
 
 		var _this = this,
-			allElementsFound = true,
-			totalLog = function(){
-				return chalk.gray( 
-					" // " + _this.ptorFindElements.foundList.length + " out of " + _this.totalNumOfElements + " element selectors are been watched"
-				);
-			};
+			allElementsFound = true;
 
 		for( var i = 0; i<foundList.length; i++ ){
 
@@ -141,7 +144,7 @@ var gulpProtractorQA = {
 
 			if( !found ){ 
 				allElementsFound = false;
-				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' at ' + chalk.bold(foundItem.fileName)  + ' not found in view files!' + totalLog() );
+				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' at ' + chalk.bold(foundItem.fileName)  + ' not found in view files!');
 			}
 
 		}
@@ -149,10 +152,10 @@ var gulpProtractorQA = {
 		if( allElementsFound ){
 			gutil.log( 
 				'[' + chalk.cyan(PLUGIN_NAME) + '] ' + 
-				chalk.green("all test element found!") + 
-				totalLog()
+				chalk.green("all test element found!") 
 			);
 		}
+
 	},
 
 	storeFileContents : function( src, collection, _cb ){
@@ -224,7 +227,9 @@ gulpProtractorQA.init = function( options ){
 	}
 
 	globals.bindStoreFileContents(function(){
-		globals.searchProtractorDotByContents(globals.testFiles);
+		globals.searchProtractorDotByContents(globals.testFiles, function beforeViewMatches(){
+			gutil.log( chalk.gray( " // " + globals.ptorFindElements.foundList.length + " out of " + globals.totalNumOfElements + " element selectors are been watched" ) );
+		});
 	});
 	
 };
