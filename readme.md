@@ -1,8 +1,11 @@
 # [gulp](http://gulpjs.com)-protractor-qa
 
+
+<img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/protractor-qa-logo.png" alt="Protractor Logo" />
+
 Keeping end-to-end test up-to-date can be really painful. Gulp Protractor QA warns you on the fly whether all element() selectors could be found or not within your AngularJS view files.
 
-[Watch a screencast on how to use gulp-protractor-qa!](http://bit.ly/1hceBSw)
+## How it works? [Watch a screencast &raquo;](http://bit.ly/1hceBSw)
 
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/gulp-protractor-qa.gif" alt="Video screen demo of gulp-protractor-qa in action!">
 
