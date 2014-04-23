@@ -12,8 +12,7 @@ Keeping end-to-end test up-to-date can be really painful. Gulp Protractor QA war
 
 ### Screencast
 
-<a href="http://bit.ly/1hceBSw" target="_blank"><img src="http://img.youtube.com/vi/mhJDhIvaKJo/0.jpg" alt="How gulp-protractor-qa works?"  /></a>
-
+<a href="http://bit.ly/1hceBSw" target="_blank"><img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/screencast-gulp-protractor-qa.png" width="719" alt="How gulp-protractor-qa works?"></a>
 
 ## Install
 
