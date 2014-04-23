@@ -5,13 +5,14 @@
 
 Keeping end-to-end test up-to-date can be really painful. Gulp Protractor QA warns you on the fly whether all element() selectors could be found or not within your AngularJS view files.
 
-## How it works? [Watch a screencast &raquo;](http://bit.ly/1hceBSw)
+## How it works?
 
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/gulp-protractor-qa.gif" alt="Video screen demo of gulp-protractor-qa in action!">
 
-> This is a beta version. From now, it's mapping the following `element()` selectors: `by.model()`, `by.binding()`, `by.css('[attr-name="attr-value"]')` and `by.repeater()`.
-This project is for the community, so please: test it, open [issues](https://github.com/ramonvictor/gulp-protractor-qa/issues), [fork it](https://github.com/ramonvictor/gulp-protractor-qa/) and if you like, give it a start! :) 
-Help me make [gulp-protractor-qa](https://www.npmjs.org/package/gulp-protractor-qa) an awesome tool! 
+
+### Screencast
+
+<a href="http://bit.ly/1hceBSw" target="_blank"><img src="http://img.youtube.com/vi/mhJDhIvaKJo/0.jpg" alt="How gulp-protractor-qa works?"  /></a>
 
 
 ## Install
@@ -63,6 +64,17 @@ Type: `String` or `Array`
 Default: `""`
 
 Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all `element()` selectors could be found.
+
+## Supported selectors
+
+gulp-protractor-qa is currently supporting the following `element()`  selectors: 
+- `by.model()`;
+- `by.binding()`; 
+- `by.css('[attr-name="attr-value"]')`;
+- `by.repeater()`.
+
+**Help**: I need to extend this list by adding more regex rules ([see file](https://github.com/ramonvictor/gulp-protractor-qa/blob/master/lib/util.js)).
+Interested to help? Fork the project and send a pull request! :)
 
 ## Changelog
 
