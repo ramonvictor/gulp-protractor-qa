@@ -10,7 +10,7 @@ Keeping end-to-end test up-to-date can be really painful. Gulp Protractor QA war
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/gulp-protractor-qa.gif" alt="Video screen demo of gulp-protractor-qa in action!">
 
 
-### Screencast
+### [Screencast](http://bit.ly/1hceBSw)
 
 <a href="http://bit.ly/1hceBSw" target="_blank"><img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/screencast-gulp-protractor-qa.png" width="719" alt="How gulp-protractor-qa works?"></a>
 
@@ -66,7 +66,7 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## Supported selectors
 
-gulp-protractor-qa is currently supporting the following `element()`  selectors: 
+Gulp-protractor-qa is currently supporting the following `element()`  selectors: 
 - `by.model()`;
 - `by.binding()`; 
 - `by.css('[attr-name="attr-value"]')`;
