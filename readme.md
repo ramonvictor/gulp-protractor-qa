@@ -64,9 +64,9 @@ Default: `""`
 
 Where your AngularJS view files are located. Protractor QA will watch the changes in those files to verify if all `element()` selectors could be found.
 
-## Supported selectors
+## Watched selectors by gulp-protractor-qa
 
-Gulp-protractor-qa is currently supporting the following `element()`  selectors: 
+Gulp-protractor-qa is currently watching the following `element()` selectors: 
 - `by.model()`;
 - `by.binding()`; 
 - `by.css('[attr-name="attr-value"]')`;
