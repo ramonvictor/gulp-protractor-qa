@@ -223,7 +223,7 @@ gulpProtractorQA.init = function( options ){
 		throw new gutil.PluginError(PLUGIN_NAME, '`testSrc` required');
 	}
 	if (typeof globals.options.viewSrc == 'undefined') {
-		throw new gutil.PluginError(PLUGIN_NAME, '`viewSrc` viewSrc!');
+		throw new gutil.PluginError(PLUGIN_NAME, '`viewSrc` required!');
 	}
 
 	globals.bindStoreFileContents(function(){
