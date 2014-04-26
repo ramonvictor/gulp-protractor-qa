@@ -3,7 +3,7 @@
 
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/protractor-qa-logo.png" alt="Protractor Logo" />
 
-Keeping end-to-end test up-to-date can be really painful. Gulp Protractor QA warns you on the fly whether all element() selectors could be found or not within your AngularJS view files.
+Keeping end-to-end tests up-to-date can be really painful. Gulp Protractor QA warns you on the fly whether all element() selectors could be found or not within your application view files.
 
 ###### *Because code changes should not break your tests!*
 
