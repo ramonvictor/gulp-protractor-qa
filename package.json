@@ -3,12 +3,11 @@
   "version": "0.1.16",
   "description": "Gulp Protractor QA warns you on the fly whether all element() selectors could be found or not within your AngularJS view files.",
   "license": "MIT",
-  "repository": "ramonvictor/gulp-protractor-qa",
-  "author": {
-    "name": "Ramon Victor",
-    "email": "ramon.wd@gmail.com",
-    "url": "https://github.com/ramonvictor"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ramonvictor/gulp-protractor-qa"
   },
+  "author": "Ramon Victor <ramon.wd@gmail.com> (https://github.com/ramonvictor)",
   "engines": {
     "node": ">=0.10.0"
   },
@@ -23,9 +22,16 @@
   ],
   "dependencies": {
     "gulp-util": "2.2.14",
-    "gaze" : "0.5.1",
-    "chalk" : "0.4.0",
-    "cheerio" : "0.15.0",
-    "buster-glob" : "0.3.3"
+    "gaze": "0.5.1",
+    "chalk": "0.4.0",
+    "cheerio": "0.15.0",
+    "buster-glob": "0.3.3"
+  },
+  "bugs": {
+    "url": "https://github.com/ramonvictor/gulp-protractor-qa/issues"
+  },
+  "homepage": "https://github.com/ramonvictor/gulp-protractor-qa",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
   }
 }
