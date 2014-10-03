@@ -1,4 +1,4 @@
-# [gulp](http://gulpjs.com)-protractor-qa [![NPM version](https://badge.fury.io/js/gulp-protractor-qa.svg)](http://badge.fury.io/js/gulp-protractor-qa)
+# [gulp](http://gulpjs.com)-protractor-qa [![NPM version](https://badge.fury.io/js/gulp-protractor-qa.svg)](http://badge.fury.io/js/gulp-protractor-qa) [![Build Status](https://travis-ci.org/ramonvictor/gulp-protractor-qa.svg?branch=master)](https://travis-ci.org/ramonvictor/gulp-protractor-qa)
 
 
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/protractor-qa-logo.png" alt="Protractor Logo" />
