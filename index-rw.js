@@ -299,10 +299,15 @@ var GulpProtractorQA = (function() {
 	 */
 	function bindStoreFileContents() {
 		var self = this;
+		var options = this.getOptions();
+
 		var promise = new rsvp.Promise(function(resolve) {
-			storeFileContents.call(self)
+			storeFileContents.call(self, options.testSrc, 'testFiles')
 				.then(function() {
-					resolve();
+					storeFileContents.call(self, options.viewSrc, 'viewFiles')
+						.then(function() {
+							resolve();
+						});
 				});
 		});
 
@@ -344,6 +349,13 @@ var GulpProtractorQA = (function() {
 	 */
 	GulpProtractorQA.prototype.getTotalNumbOfElements = function() {
 		return this.totalNumbOfElements;
+	};
+
+	/**
+	 * Return `options`.
+	 */
+	GulpProtractorQA.prototype.getOptions = function() {
+		return this.options;
 	};
 
 	/**
