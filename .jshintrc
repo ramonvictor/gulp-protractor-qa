@@ -20,5 +20,6 @@
   "maxlen": 80,
   "asi": true,
   "laxcomma": true,
-  "white": true
+  "white": true,
+  "validthis" : true
 }

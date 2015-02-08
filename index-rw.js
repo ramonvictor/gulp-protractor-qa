@@ -5,198 +5,356 @@ var chalk = require('chalk');
 var Gaze = require('gaze').Gaze;
 var glob = require('buster-glob');
 var cheerio = require('cheerio');
+var rsvp = require('rsvp');
 
-var protractorQaUtil = require('./lib/util');
+var utils = require('./lib/util');
 var PLUGIN_NAME = 'gulp-protractor-qa';
 
-var GulpProtractorQA = (function(undefined) {
+var GulpProtractorQA = (function() {
 	'use strict';
 
 	function GulpProtractorQA() {
 		this.testFiles = [];
 		this.viewFiles = [];
-		this.totalNumberOfElements = 0;
 
-		this.foundList = [];
-		this.ptorFindElementsRegex = protractorQaUtil.getRegexList();
+		this.ptorElementsFoundList = [];
+		this.totalNumbOfElements = 0;
+
+		this.ptorFindElementsRegex = utils.getRegexList();
 	}
 
-	GulpProtractorQA.prototype.findDotByMatches = function(path, contents) {
+	/**
+	 * Push new item into `testFiles` array.
+	 *
+	 * @param {Object} file
+	 */
+	function setTestFiles(file) {
+		this.testFiles.push(file);
+	}
+
+	/**
+	 * Push new item into `viewFiles` array.
+	 *
+	 * @param {Object} file
+	 */
+	function setViewFiles(file) {
+		this.viewFiles.push(file);
+	}
+
+	/**
+	 * Push new item into `ptorElementsFoundList` array.
+	 *
+	 * @param {Object} element
+	 */
+	function setPtorElementFound(element) {
+		this.ptorElementsFoundList.push(element);
+	}
+
+	/**
+	 * Push new item into `ptorElementsFoundList` array.
+	 *
+	 * @param {Number} intNumber
+	 */
+	function setTotalNumbOfElements(intNumber) {
+		this.totalNumbOfElements.push(intNumber);
+	}
+
+	/**
+	 * Clear `ptorElementsFoundList` array.
+	 *
+	 */
+	function resetPtorElementsFound() {
+		this.ptorElementsFoundList = [];
+	}
+
+	/**
+	 * Find '.by' strings within a given `path` and `content`.
+	 *
+	 * @param {String} path
+	 * @param {Object} content
+	 */
+	function findDotByMatches(path, content) {
 		var results;
-		var regexList = this.ptorFindElementsRegex;
-		var resultItem = {};
+		var regexList = this.getPtorElementsRegex();
 
 		for (var i = 0; i < regexList.length; i = i + 1) {
-			while ((results = regexList[i].match.exec(contents)) !== null) {
-				resultItem = {
-					at : results[0],
-					val : results[1],
-					type : regexList[i].type,
-					attrName : regexList[i].attrName,
-					fileName : path
-				};
-				
-				this.foundList.push( resultItem );
+			while ((results = regexList[i].match.exec(content)) !== null) {
+				setPtorElementFound.call(this, {
+					at: results[0],
+					val: results[1],
+					type: regexList[i].type,
+					attrName: regexList[i].attrName,
+					fileName: path
+				});
 			}
 		}
-	};
+	}
 
-
-	GulpProtractorQA.prototype.elementsCount = function(contents) {
-		var results;
+	/**
+	 * Count 'element' and 'element.all' occurrences in a given `content`.
+	 *
+	 * @param {String} content
+	 */
+	function elementsCount(content) {
 		var elemRegex =  /element[\.all\(|\()]/gi;
 
-		while ((results = elemRegex.exec(contents)) !== null) {
-			this.totalNumOfElements = this.totalNumOfElements + 1;
+		while ((elemRegex.exec(content)) !== null) {
+			setTotalNumbOfElements.call(this, this.getTotalNumbOfElements() + 1);
 		}
-	};
+	}
 
-	GulpProtractorQA.prototype.searchProtractorDotByContents = function(updatedTestFiles, beforeViewMatches) {
-		for (var i = 0; i < updatedTestFiles.length; i = i + 1) {
-			var obj = updatedTestFiles[i];
-			this.findDotByMatches(obj.path, obj.contents);
-			this.elementsCount(obj.contents);
+	/**
+	 * Search '.by' method within `testFiles` array.
+	 *
+	 * @param {String} content
+	 */
+	function searchDotByContents() {
+		var testFiles = this.getTestFiles();
+		var i;
+		var obj;
+		for (i = 0; i < testFiles.length; i = i + 1) {
+			obj = testFiles[i];
+			findDotByMatches.call(this, obj.path, obj.contents);
+			elementsCount.call(this, obj.contents);
 		}
+	}
 
-		// log number of watched elements
-		if (typeof beforeViewMatches === 'function') {
-			beforeViewMatches();
-		}
+	/**
+	 * Update object related to modified file(s).
+	 *
+	 * @param {String} collection
+	 * @param {String} filepath
+	 * @param {String} newContent
+	 */
+	function updateFileContents(collection, filepath, newContent) {
+		var i;
+		var item;
+		var fileName;
+		var collectionList = collection === 'viewFiles' ?
+			this.getViewFiles() : this.getTestFiles();
 
-		// verify matches
-		this.verifyViewMatches( this.foundList );
-	};
-
-	GulpProtractorQA.prototype.updateFileContents = function(collection, filepath, newContent) {
-		
-		for (var i = 0; i < this[ collection ].length; i = i + 1) {
-			var obj = this[collection][i];
-			
-			if (typeof obj.path !== 'undefined') {
-				if( filepath.indexOf( obj.path.replace('./', '/') ) >= 0 ){
-					obj.contents = newContent;
+		for (i = 0; i < collectionList.length; i = i + 1) {
+			item = collectionList[i];
+			if (item.hasOwnProperty('path')) {
+				fileName = item.path.replace('./', '/');
+				if (filepath.indexOf(fileName) >= 0) {
+					item.contents = newContent;
 					break;
 				}
 			}
 		}
 
-		// reset foundList and totalNumOfElements
-		this.totalNumOfElements = 0;
-		this.foundList = [];
+		// reset ptorElementsFoundList and totalNumbOfElements
+		setTotalNumbOfElements.call(this, 0);
+		resetPtorElementsFound.call(this);
 
 		// map protractor elements
-		this.searchProtractorDotByContents( this.testFiles );
-	};
+		searchDotByContents.call(this);
+	}
 
-	GulpProtractorQA.prototype.bindExists = function(bind, contents) {
-		var results,
-			exists = false,
-			pattern =  /{{(.*?)}}/gi;
+	/**
+	 * Check whether `bind` is present in a given `content` or not.
+	 *
+	 * @param  {String} bind
+	 * @param  {String} content
+	 * @return {Boolean}
+	 */
+	function bindExists(bind, content) {
+		var results;
+		var exists = false;
+		var pattern =  /{{(.*?)}}/gi;
 
-		while ((results = pattern.exec(contents)) !== null) {
-			if (results[1].indexOf( bind ) >= 0) {
+		while ((results = pattern.exec(content)) !== null) {
+			if (results[1].indexOf(bind) >= 0) {
 				exists = true;
 			}
 		}
-		
+
 		return exists;
-	};
+	}
 
-	GulpProtractorQA.prototype.verifyViewMatches = function(foundList) {
-		var allElementsFound = true;
+	/**
+	 * Check whether all protractor selectors is findable within `viewFiles`.
+	 *
+	 * @return {Promise} which resolves when `allElementsFound` remains `true`;
+	 * 	and rejects when `allElementsFound` is `false`
+	 * 	sending `foundList` current index {Object} as argument.
+	 */
+	function verifyViewMatches() {
+		var promise = new rsvp.Promise(function(resolve, reject) {
+			var allElementsFound = true;
+			var foundList = this.getPtorElementsFound();
+			var found;
 
-		for (var i = 0; i<foundList.length; i = i + 1) {
+			foundList.forEach(function(item) {
+				var viewFiles = this.getViewFiles();
 
-			var found = false;
-			var foundItem = foundList[i];
+				viewFiles.forEach(function(viewItem) {
+					var $ = cheerio.load(viewItem.contents);
+					var selector;
 
-			for (var c = 0; c < this.viewFiles.length; c = c + 1) {
-				var obj = this.viewFiles[c];
-				
-				var $ = cheerio.load(obj.contents);
-				var selector = '';
+					if (item.type === 'attr') {
+						selector = '[' + item.attrName + '="' +
+										item.val + '"]';
 
-				if (foundItem.type === 'attr') {
-				 	selector = '[' + foundItem.attrName + 
-				 					'="' + foundItem.val + '"]';
-					
-					if (foundItem.attrName === 'ng-bind') {
-				 		// search for {{bindings}}
-				 		if (this.bindExists(foundItem.val, obj.contents)) {
-				 			found = true;
-				 		}
-				 	}
+						if (item.attrName === 'ng-bind') {
+							if (bindExists.call(this, item.val, viewItem.contents)) {
+								found = true;
+							}
+						}
+					} else if (item.type === 'cssAttr') {
+						selector = '[' + item.val + ']';
+					}
 
-				} else if (foundItem.type === 'cssAttr') {
-					selector = '[' + foundItem.val + ']';
+					if ($(selector).length) {
+						found = true;
+					}
+				});
+
+				if (!found) {
+					allElementsFound = false;
+					reject(item);
 				}
-
-				if ($(selector).length) {
-					found = true;
-				}
-			}
-
-			if (!found) { 
-				allElementsFound = false;
-				gutil.log(
-					'[' + chalk.cyan(PLUGIN_NAME) + '] ' + 
-					chalk.red(foundItem.at) + ' at ' + 
-					chalk.bold(foundItem.fileName)  + 
-					' not found in view files!'
-				);
-			}
-		}
-
-		if (allElementsFound) {
-			gutil.log(
-				'[' + chalk.cyan(PLUGIN_NAME) + '] ' + 
-				chalk.green('all test element found!') 
-			);
-		}
-	};
-
-	GulpProtractorQA.prototype.storeFileContents = function(src, collection, _cb) {
-
-		// watch test files changes
-		var gaze = new Gaze(src);
-		gaze.on('all', function(event, filepath) { 
-			fs.readFile(filepath, 'utf8', function(err, data){
-				if (err) { throw err; }
-				this.updateFileContents(collection, filepath, data);
 			});
+
+			if (allElementsFound) {
+				resolve();
+			}
 		});
 
+		return promise;
+	}
 
-		// async map file contents
-		var async = function async(arg, callback) {
-		  	fs.readFile(arg, 'utf8', function (err, data) {
-			    if (err) { throw err; }
-				callback(arg, data);
+	/**
+	 * Watch files and trigger `updateFileContents` whenever a file changes.
+	 *
+	 * @param  {String} src
+	 * @param  {String} collection
+	 */
+	function watchTestfiles(src, collection) {
+		var self = this;
+		var gaze = new Gaze(src);
+		gaze.on('all', function(event, filepath) {
+			fs.readFile(filepath, 'utf8', function(err, data) {
+				if (err) {
+					throw err;
+				}
+				updateFileContents.call(self, collection, filepath, data);
 			});
-		};
+		});
+	}
 
-		glob.glob(src, function (er, files) {
-			files.forEach(function(item) {
-				async(item, function(filePath, data){
-					this[ collection ].push(
-						{
-							path : filePath,
-							contents : data
-						}
-					);
+	/**
+	 * Loop through list of files and save a reference for each of them.
+	 *
+	 * @param  {String} src
+	 * @param  {String} collection
+	 * @return {Promise} which resolves when file reading process is done.
+	 */
+	function storeFileContents(src, collection) {
+		var self = this;
 
-					if (this[ collection ].length === files.length) {
-						_cb();
+		watchTestfiles.call(this, src, collection);
+
+		var promise = new rsvp.Promise(function(resolve, reject) {
+			var async = function async(arg, callback) {
+				fs.readFile(arg, 'utf8', function(err, data) {
+					if (err) {
+						reject(err);
 					}
+					callback(arg, data);
+				});
+			};
+
+			glob.glob(src, function(er, files) {
+				files.forEach(function(item) {
+					async(item, function(filePath, data) {
+						var newItem = {
+							path: filePath,
+							contents: data
+						};
+
+						if (collection === 'testFiles') {
+							setTestFiles.call(self, newItem);
+							if (self.getTestFiles().length === files.length) {
+								resolve();
+							}
+						} else {
+							setViewFiles.call(self, newItem);
+							if (self.getViewFiles().length === files.length) {
+								resolve();
+							}
+						}
+					});
 				});
 			});
 		});
+
+		return promise;
+	}
+
+	/**
+	 * Trigger for `storeFileContents`
+	 * @return {Promise}
+	 */
+	function bindStoreFileContents() {
+		var self = this;
+		var promise = new rsvp.Promise(function(resolve) {
+			storeFileContents.call(self)
+				.then(function() {
+					resolve();
+				});
+		});
+
+		return promise;
+	}
+
+	// PUBLIC API
+
+	/**
+	 * Return `ptorFindElementsRegex` list of regex objects.
+	 */
+	GulpProtractorQA.prototype.getPtorElementsRegex = function() {
+		return this.ptorFindElementsRegex;
 	};
 
+	/**
+	 * Return `testFiles` array.
+	 */
+	GulpProtractorQA.prototype.getTestFiles = function() {
+		return this.testFiles;
+	};
 
+	/**
+	 * Return `viewFiles` array.
+	 */
+	GulpProtractorQA.prototype.getViewFiles = function() {
+		return this.viewFiles;
+	};
+
+	/**
+	 * Return `ptorElementsFoundList` array.
+	 */
+	GulpProtractorQA.prototype.getPtorElementsFound = function() {
+		return this.ptorElementsFoundList;
+	};
+
+	/**
+	 * Return `totalNumbOfElements`.
+	 */
+	GulpProtractorQA.prototype.getTotalNumbOfElements = function() {
+		return this.totalNumbOfElements;
+	};
+
+	/**
+	 * Initialize `GulpProtractorQA` with given `testSrc` and `viewSrc`.
+	 *
+	 * @param {Object} options
+	 */
 	GulpProtractorQA.prototype.init = function(options) {
+		var self = this;
 		this.options = options || {};
-			
+
 		if (typeof this.options.testSrc === 'undefined') {
 			throw new gutil.PluginError(PLUGIN_NAME, '`testSrc` required');
 		}
@@ -204,20 +362,37 @@ var GulpProtractorQA = (function(undefined) {
 			throw new gutil.PluginError(PLUGIN_NAME, '`viewSrc` required!');
 		}
 
-		this.bindStoreFileContents(function() {
-			this.searchProtractorDotByContents(this.testFiles, 
-				function beforeViewMatches() {
-					gutil.log(
-						'[' + chalk.cyan(PLUGIN_NAME) + '] ' + 
-						chalk.gray( 
-							'// ' + this.foundList.length + 
-							' out of ' + this.totalNumOfElements + 
-							' element selectors are been watched' 
-						)
-					);
+		bindStoreFileContents.call(this)
+			.then(function() {
+				searchDotByContents.call(self)
+					.then(function() {
+						// log watched elements
+						gutil.log(
+							'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
+							chalk.gray(
+								'// ' + self.getPtorElementsFound().length +
+								' out of ' + self.getTotalNumbOfElements() +
+								' element selectors are been watched'
+							)
+						);
+
+						// verify view matches
+						verifyViewMatches.call(self)
+							.then(function() {
+								gutil.log(
+									'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
+									chalk.green('all test element found!')
+								);
+							}).catch(function(item) {
+								gutil.log(
+									'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
+									chalk.red(item.at) + ' at ' +
+									chalk.bold(item.fileName) +
+									' not found in view files!'
+								);
+							});
+					});
 			});
-		});
-		
 	};
 
 	return GulpProtractorQA;
