@@ -56,7 +56,7 @@ var GulpProtractorQA = (function() {
 	 * @param {Number} intNumber
 	 */
 	function setTotalNumbOfElements(intNumber) {
-		this.totalNumbOfElements.push(intNumber);
+		this.totalNumbOfElements = intNumber;
 	}
 
 	/**
@@ -109,14 +109,20 @@ var GulpProtractorQA = (function() {
 	 * @param {String} content
 	 */
 	function searchDotByContents() {
+		var self = this;
 		var testFiles = this.getTestFiles();
-		var i;
-		var obj;
-		for (i = 0; i < testFiles.length; i = i + 1) {
-			obj = testFiles[i];
-			findDotByMatches.call(this, obj.path, obj.contents);
-			elementsCount.call(this, obj.contents);
-		}
+		var testFile;
+
+		var promise = new rsvp.Promise(function(resolve) {
+			for (var i = 0; i < testFiles.length; i = i + 1) {
+				testFile = testFiles[i];
+				findDotByMatches.call(self, testFile.path, testFile.contents);
+				elementsCount.call(self, testFile.contents);
+			}
+			resolve();
+		});
+
+		return promise;
 	}
 
 	/**
@@ -144,16 +150,20 @@ var GulpProtractorQA = (function() {
 			}
 		}
 
-		// reset ptorElementsFoundList and totalNumbOfElements
+		/**
+		 * Reset `ptorElementsFoundList` and `totalNumbOfElements`.
+		 */
 		setTotalNumbOfElements.call(this, 0);
 		resetPtorElementsFound.call(this);
 
-		// map protractor elements
+		/**
+		 * Map protractor elements.
+		 */
 		searchDotByContents.call(this);
 	}
 
 	/**
-	 * Check whether `bind` is present in a given `content` or not.
+	 * Check whether `{{bind}}` is present in a given `content` or not.
 	 *
 	 * @param  {String} bind
 	 * @param  {String} content
@@ -174,6 +184,37 @@ var GulpProtractorQA = (function() {
 	}
 
 	/**
+	 * Lookup into `viewfle` content whether `ptorSelector` is findable.
+	 *
+	 * @param  {Object} ptorSelector
+	 * @param  {String} viewFile
+	 * @return {Boolean|undefined}
+	 */
+	function attrLookup(ptorSelector, viewFile) {
+		var $ = cheerio.load(viewFile.contents);
+		var selector;
+
+		if (ptorSelector.type === 'attr') {
+			selector = '[' + ptorSelector.attrName + '="' +
+							ptorSelector.val + '"]';
+
+			if (ptorSelector.attrName === 'ng-bind') {
+				if (bindExists(ptorSelector.val, viewFile.contents)) {
+					return true;
+				}
+			}
+		} else if (ptorSelector.type === 'cssAttr') {
+			selector = '[' + ptorSelector.val + ']';
+		}
+
+		if ($(selector).length) {
+			return true;
+		}
+
+		return;
+	}
+
+	/**
 	 * Check whether all protractor selectors is findable within `viewFiles`.
 	 *
 	 * @return {Promise} which resolves when `allElementsFound` remains `true`;
@@ -181,48 +222,34 @@ var GulpProtractorQA = (function() {
 	 * 	sending `foundList` current index {Object} as argument.
 	 */
 	function verifyViewMatches() {
-		var promise = new rsvp.Promise(function(resolve, reject) {
-			var allElementsFound = true;
-			var foundList = this.getPtorElementsFound();
-			var found;
+		var self = this;
+		var allElementsFound = true;
+		var foundList = this.getPtorElementsFound();
+		var viewFiles = this.getViewFiles();
+		var found;
 
-			foundList.forEach(function(item) {
-				var viewFiles = this.getViewFiles();
-
-				viewFiles.forEach(function(viewItem) {
-					var $ = cheerio.load(viewItem.contents);
-					var selector;
-
-					if (item.type === 'attr') {
-						selector = '[' + item.attrName + '="' +
-										item.val + '"]';
-
-						if (item.attrName === 'ng-bind') {
-							if (bindExists.call(this, item.val, viewItem.contents)) {
-								found = true;
-							}
-						}
-					} else if (item.type === 'cssAttr') {
-						selector = '[' + item.val + ']';
-					}
-
-					if ($(selector).length) {
-						found = true;
-					}
-				});
-
-				if (!found) {
-					allElementsFound = false;
-					reject(item);
-				}
+		foundList.forEach(function(ptorSelector) {
+			viewFiles.forEach(function(viewFile) {
+				found = attrLookup.call(self, ptorSelector, viewFile);
 			});
 
-			if (allElementsFound) {
-				resolve();
+			if (!found) {
+				allElementsFound = false;
+				gutil.log(
+					'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
+					chalk.red(ptorSelector.at) + ' at ' +
+					chalk.bold(ptorSelector.fileName) +
+					' not found in view files!'
+				);
 			}
 		});
 
-		return promise;
+		if (allElementsFound) {
+			gutil.log(
+				'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
+				chalk.green('all test element found!')
+			);
+		}
 	}
 
 	/**
@@ -314,7 +341,9 @@ var GulpProtractorQA = (function() {
 		return promise;
 	}
 
-	// PUBLIC API
+	/**
+	 * PUBLIC API
+	 */
 
 	/**
 	 * Return `ptorFindElementsRegex` list of regex objects.
@@ -378,7 +407,9 @@ var GulpProtractorQA = (function() {
 			.then(function() {
 				searchDotByContents.call(self)
 					.then(function() {
-						// log watched elements
+						/**
+						 * Log watched elements.
+						 */
 						gutil.log(
 							'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
 							chalk.gray(
@@ -388,27 +419,30 @@ var GulpProtractorQA = (function() {
 							)
 						);
 
-						// verify view matches
-						verifyViewMatches.call(self)
-							.then(function() {
-								gutil.log(
-									'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
-									chalk.green('all test element found!')
-								);
-							}).catch(function(item) {
-								gutil.log(
-									'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
-									chalk.red(item.at) + ' at ' +
-									chalk.bold(item.fileName) +
-									' not found in view files!'
-								);
-							});
+						/**
+						 * Log number of elements watched.
+						 */
+						gutil.log(
+							'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
+							chalk.gray(
+								'// ' + self.getPtorElementsFound().length +
+								' out of ' + self.getTotalNumbOfElements() +
+								' element selectors are been watched'
+							)
+						);
+
+						/**
+						 * Verify view matches.
+						 */
+						verifyViewMatches.call(self);
 					});
 			});
 	};
 
-	return GulpProtractorQA;
+	return new GulpProtractorQA();
 })();
 
-// Exporting the plugin main function
+/**
+ * Expose `GulpProtractorQA`.
+ */
 module.exports = GulpProtractorQA;
