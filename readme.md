@@ -79,6 +79,8 @@ Interested to help? Fork the project and send a pull request! :)
 
 ## Changelog
 
+- **0.1.18** bug fix: adding support for `data-*` attributes;
+
 - **0.1.14** showing "`<number>` out of `<total>` element selectors are been watched" in the log;
 
 - **0.1.12** bug fix related to `gaze` version;
