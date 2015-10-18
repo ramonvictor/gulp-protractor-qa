@@ -2,7 +2,6 @@ var gutil = require('gulp-util');
 var cheerio = require('cheerio');
 var async = require('async');
 
-var protractorQaUtil = require('./lib/util');
 var storeFileContent = require('./lib/store-file-content');
 var findSelectors = require('./lib/find-selectors');
 var findViewMatches = require('./lib/find-view-matches');
