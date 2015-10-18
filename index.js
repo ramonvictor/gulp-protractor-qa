@@ -32,7 +32,7 @@ util.inherits(GulpProtractorQA, EventEmitter);
 //
 // @param {Object} options
 // @param {string} options.testSrc - Glob pattern string point to test files
-// @param {string} options.testSrc - Glob pattern string point to view files
+// @param {string} options.viewSrc - Glob pattern string point to view files
 // @param {boolean} options.runOnce - Flag to decide whether it should watch files changes or not
 GulpProtractorQA.prototype.init = function(options) {
 	this.options = options || {};
