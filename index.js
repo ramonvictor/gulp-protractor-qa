@@ -51,6 +51,11 @@ GulpProtractorQA.prototype.init = function(options) {
 	});
 }
 
+/**
+ * Loop through test files and find protractor
+ * selectors (e.g.: by.css('[href="/"]')).
+ *
+ */
 function findElementSelectors() {
 	var self = this;
 	// reset selectors
@@ -94,6 +99,7 @@ function startWatchingFiles() {
 
 	// Listen to change event
 	this.on('change', function(data) {
+		// TODO: avoid looping through all files
 		findElementSelectors.call(self);
 	});
 }
