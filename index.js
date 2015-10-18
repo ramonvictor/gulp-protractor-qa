@@ -1,20 +1,26 @@
+var util = require('util');
 var gutil = require('gulp-util');
 var cheerio = require('cheerio');
 var async = require('async');
+var EventEmitter = require('events');
 
 var storeFileContent = require('./lib/store-file-content');
 var findSelectors = require('./lib/find-selectors');
 var findViewMatches = require('./lib/find-view-matches');
 var consoleOutput = require('./lib/console-output');
+var watchFilesChange = require('./lib/watch-files-change');
 
 var PLUGIN_NAME = 'gulp-protractor-qa';
 
 function GulpProtractorQA() {
 	this.testFiles = [];
 	this.viewFiles = [];
-
 	this.selectors = [];
+	this.watchIsRunning = 0;
 }
+
+// Inheriting EventEmitter
+util.inherits(GulpProtractorQA, EventEmitter);
 
 GulpProtractorQA.prototype.init = function(options) {
 	var self = this;
@@ -47,9 +53,11 @@ GulpProtractorQA.prototype.init = function(options) {
 
 function findElementSelectors() {
 	var self = this;
+	// reset selectors
+	this.selectors = [];
 
 	this.testFiles.forEach(function(item) {
-		self.selectors = findSelectors.init(item);
+		self.selectors = self.selectors.concat(findSelectors.init(item));
 	});
 
 	checkSelectorViewMatches.call(this);
@@ -63,14 +71,31 @@ function checkSelectorViewMatches() {
 	});
 
 	outputResult.call(this);
+
+	if (!this.options.runOnce && !this.watchIsRunning) {
+		startWatchingFiles.call(this);
+	}
 }
 
 function outputResult() {
-	var notFound = this.selectors.filter(function(item) {
+	var notFoundItems = this.selectors.filter(function(item) {
 	    return !item.found;
 	});
 
-	consoleOutput(notFound);
+	consoleOutput(notFoundItems);
+}
+
+function startWatchingFiles() {
+	var self = this;
+	this.watchIsRunning = 1;
+
+	// Init gaze
+	watchFilesChange.call(this);
+
+	// Listen to change event
+	this.on('change', function(data) {
+		findElementSelectors.call(self);
+	});
 }
 
 // Exporting the plugin main function

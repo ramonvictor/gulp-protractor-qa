@@ -28,7 +28,8 @@
     "buster-glob": "0.3.3",
     "ast-traverse": "^0.1.1",
     "esprima": "^2.6.0",
-    "async": "^1.4.2"
+    "async": "^1.4.2",
+    "underscore": "^1.8.3"
   },
   "bugs": {
     "url": "https://github.com/ramonvictor/gulp-protractor-qa/issues"
