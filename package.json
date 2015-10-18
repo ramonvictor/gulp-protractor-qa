@@ -26,7 +26,9 @@
     "chalk": "0.4.0",
     "cheerio": "0.15.0",
     "buster-glob": "0.3.3",
-    "rsvp": "^3.0.14"
+    "ast-traverse": "^0.1.1",
+    "esprima": "^2.6.0",
+    "async": "^1.4.2"
   },
   "bugs": {
     "url": "https://github.com/ramonvictor/gulp-protractor-qa/issues"
