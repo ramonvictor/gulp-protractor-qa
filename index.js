@@ -3,6 +3,7 @@ var gutil = require('gulp-util');
 var cheerio = require('cheerio');
 var async = require('async');
 var EventEmitter = require('events');
+var _ = require('underscore');
 
 // `GulpProtractorQA` sub-modules dependecies
 var storeFileContent = require('./lib/store-file-content');
@@ -21,6 +22,7 @@ function GulpProtractorQA() {
 	this.viewFiles = [];
 	this.selectors = [];
 	this.watchIsRunning = 0;
+	this.isFirstLoad = 1;
 }
 
 // Inherit EventEmitter.
@@ -94,10 +96,16 @@ function checkSelectorViewMatches() {
 
 function outputResult() {
 	var notFoundItems = this.selectors.filter(function(item) {
-	    return !item.found;
+	    return (!item.found && !item.disabled);
 	});
 
 	consoleOutput.printFoundItems(notFoundItems);
+
+	// On first run warn watched selectors.
+	if (this.isFirstLoad) {
+		warnWatchedSelectors.call(this);
+		this.isFirstLoad = 0;
+	}
 
 	if (!this.options.runOnce && !this.watchIsRunning) {
 		startWatchingFiles.call(this);
@@ -108,7 +116,7 @@ function startWatchingFiles() {
 	var self = this;
 	this.watchIsRunning = 1;
 
-	// Init gaze
+	// Init gaze.
 	watchFilesChange.call(this);
 
 	// Listen to change event
@@ -116,6 +124,17 @@ function startWatchingFiles() {
 		// TODO: avoid looping through all files
 		findElementSelectors.call(self);
 	});
+}
+
+function warnWatchedSelectors() {
+	var total = this.selectors.length;
+
+	var filtered = _.filter(this.selectors, function(selector) {
+		return !selector.disabled;
+	});
+
+	// Output `X` out `total` are being watched.
+	consoleOutput.watchedLocators(filtered.length, total);
 }
 
 // Exporting the plugin main function
