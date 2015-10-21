@@ -87,16 +87,22 @@ function findElementSelectors() {
 function checkSelectorViewMatches() {
 	var self = this;
 
+	// Set all selectors to not found
+	this.selectors.forEach(function(item) {
+		item.found = 0;
+	});
+
+	// Check if selectors are findable
 	this.viewFiles.forEach(function(item) {
-		findViewMatches.init(self.selectors, item.content);
+		findViewMatches(self.selectors, item.content);
 	});
 
 	outputResult.call(this);
 }
 
 function outputResult() {
-	var notFoundItems = this.selectors.filter(function(item) {
-	    return (!item.found && !item.disabled);
+	var notFoundItems = _.filter(this.selectors, function(item) {
+		return (!item.found && !item.disabled);
 	});
 
 	consoleOutput.printFoundItems(notFoundItems);
@@ -113,17 +119,34 @@ function outputResult() {
 }
 
 function startWatchingFiles() {
-	var self = this;
 	this.watchIsRunning = 1;
 
 	// Init gaze.
 	watchFilesChange.call(this);
 
 	// Listen to change event
-	this.on('change', function(data) {
-		// TODO: avoid looping through all files
-		findElementSelectors.call(self);
+	this.on('change', onFileChange.bind(this));
+}
+
+function onFileChange(data) {
+	if (data.fileType === 'test') {
+		updateSelectors.call(this, data);
+	}
+
+	checkSelectorViewMatches.call(this);
+}
+
+function updateSelectors(data) {
+	var filtered = _.filter(this.selectors, function(selector) {
+		return !(selector.path === data.path);
 	});
+	var updatedTestFile = this.testFiles[data.index];
+	var newSelectors;
+
+	if (updatedTestFile) {
+		newSelectors = findSelectors.init(updatedTestFile);
+		this.selectors = filtered.concat(newSelectors);
+	}
 }
 
 function warnWatchedSelectors() {
