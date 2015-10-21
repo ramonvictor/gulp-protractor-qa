@@ -1,240 +1,164 @@
+var util = require('util');
 var gutil = require('gulp-util');
-var fs = require('fs');
-var chalk = require('chalk');
-var Gaze = require('gaze').Gaze;
-var glob = require("buster-glob");
 var cheerio = require('cheerio');
-var protractorQaUtil = require('./lib/util');
+var async = require('async');
+var EventEmitter = require('events');
+var _ = require('underscore');
 
-const PLUGIN_NAME = 'gulp-protractor-qa';
+// `GulpProtractorQA` sub-modules dependecies
+var storeFileContent = require('./lib/store-file-content');
+var findSelectors = require('./lib/find-selectors');
+var findViewMatches = require('./lib/find-view-matches');
+var consoleOutput = require('./lib/console-output');
+var watchFilesChange = require('./lib/watch-files-change');
 
-var gulpProtractorQA = {
-	testFiles : [],
-	viewFiles : [],
-	totalNumOfElements : 0,
+// Constant
+var PLUGIN_NAME = 'gulp-protractor-qa';
 
-	ptorFindElements : {
-		regex : protractorQaUtil.getRegexList(),
-		foundList : []
-	},
+// Define `GulpProtractorQA` class.
+// @class
+function GulpProtractorQA() {
+	this.testFiles = [];
+	this.viewFiles = [];
+	this.selectors = [];
+	this.watchIsRunning = 0;
+	this.isFirstLoad = 1;
+}
 
-	findDotByMatches : function( path, contents ){
-		var _this = this,
-			results,
-			regexList = _this.ptorFindElements.regex;
+// Inherit EventEmitter.
+util.inherits(GulpProtractorQA, EventEmitter);
 
-		// lopp regexlist
-		for( var i = 0; i<regexList.length; i++ ){
-			// verify matches
-			while ((results = regexList[i].match.exec(contents)) !== null)
-			{
-				var res = {
-					at : results[0],
-					val : results[1],
-					type : regexList[i].type,
-					attrName : regexList[i].attrName,
-					fileName : path
-				};
+// Init application.
+//
+// @param {Object} options
+// @param {string} options.testSrc - Glob pattern string point to test files
+// @param {string} options.viewSrc - Glob pattern string point to view files
+// @param {boolean} options.runOnce - Flag to decide whether it should watch files changes or not
+GulpProtractorQA.prototype.init = function(options) {
+	this.options = options || {};
 
-				_this.ptorFindElements.foundList.push( res );
-
-			}
-		}
-
-	},
-
-	elementsCount : function( contents ){
-		var _this = this,
-			results,
-			elemRegex =  /element[\.all\(|\()]/gi;
-
-		while ((results = elemRegex.exec(contents)) !== null) {
-			_this.totalNumOfElements = _this.totalNumOfElements + 1;
-		}
-
-	},
-
-	searchProtractorDotByContents : function( updatedTestFiles, beforeViewMatches ){
-		var _this = this;
-		for( var i = 0; i<updatedTestFiles.length; i++ ){
-			var obj = updatedTestFiles[i];
-			_this.findDotByMatches(obj.path, obj.contents);
-			_this.elementsCount( obj.contents );
-		}
-
-		// log number of watched elements
-		if( typeof beforeViewMatches === 'function'){
-			beforeViewMatches();
-		}
-
-		// verify matches
-		_this.verifyViewMatches( _this.ptorFindElements.foundList );
-	},
-
-	updateFileContents : function( collection, filepath, newContent ){
-
-		var _this = this;
-
-		for( var i = 0; i < _this[ collection ].length; i++ ){
-			var obj = _this[ collection ][i];
-			if( typeof obj.path != 'undefined' ){
-				if( filepath.indexOf( obj.path.replace("./", "/") ) >= 0 ){
-					obj.contents = newContent;
-					break;
-				}
-			}
-		}
-
-		// reset foundList and totalNumOfElements
-		_this.totalNumOfElements = 0;
-		_this.ptorFindElements.foundList = [];
-
-		// map protractor elements
-		_this.searchProtractorDotByContents( _this.testFiles );
-	},
-
-	bindExists : function( bind, contents ){
-		var results,
-			exists = false,
-			pattern =  /{{(.*?)}}/gi;
-
-		while ( (results = pattern.exec(contents)) !== null ){
-			if( results[1].indexOf( bind ) >= 0 ){
-				exists = true;
-			}
-		}
-
-		return exists;
-	},
-
-	verifyViewMatches : function( foundList ){
-
-		var _this = this,
-			allElementsFound = true;
-
-		for( var i = 0; i < foundList.length; i++ ){
-
-			var found = false;
-			var foundItem = foundList[i];
-
-			for(var c = 0; c < _this.viewFiles.length; c++ ){
-				var obj = _this.viewFiles[c];
-
-				$ = cheerio.load( obj.contents );
-				var selector = '';
-
-				if( foundItem.type === "attr" ){
-					selector = [
-						'[', foundItem.attrName, '="', foundItem.val, '"], ',
-						'[data-', foundItem.attrName, '="', foundItem.val, '"]'
-					].join("");
-
-					if( foundItem.attrName === "ng-bind" ){
-						// search for {{bindings}}
-						if( _this.bindExists( foundItem.val, obj.contents ) ){
-							found = true;
-						}
-					}
-				} else if( foundItem.type === "cssAttr" ){
-					selector = [ '[', foundItem.val, ']' ].join("");
-				}
-
-				if ($(selector).length) {
-					found = true;
-				}
-			}
-
-			if( !found ){
-				allElementsFound = false;
-				gutil.log('[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.red(foundItem.at) + ' at ' + chalk.bold(foundItem.fileName)  + ' not found within view files!');
-			}
-
-		}
-
-		if( allElementsFound ){
-			gutil.log(
-				'[' + chalk.cyan(PLUGIN_NAME) + '] ' +
-				chalk.green("all test elements were successfully found!")
-			);
-		}
-
-	},
-
-	storeFileContents : function( src, collection, _cb ){
-
-		var _this = this;
-
-		// watch test files changes
-		var gaze = new Gaze(src);
-		gaze.on('all', function(event, filepath) {
-			fs.readFile(filepath, 'utf8', function(err, data){
-				if (err) { throw err; }
-				_this.updateFileContents(collection, filepath, data);
-			});
-		});
-
-
-		// async map file contents
-		var async = function async(arg, callback) {
-		fs.readFile(arg, 'utf8', function (err, data) {
-			if (err) { throw err; }
-			callback(arg, data);
-		});
-		};
-
-		glob.glob(src, function (er, files) {
-				files.forEach(function(item) {
-					async(item, function(filePath, data){
-
-						_this[ collection ].push(
-							{
-								path : filePath,
-								contents : data
-							}
-						);
-
-						if( _this[ collection ].length == files.length ) {
-							_cb();
-						}
-					});
-				});
-		});
-
-	},
-
-	bindStoreFileContents : function( _callback ){
-
-		var _this = this;
-
-		_this.storeFileContents( _this.options.testSrc, "testFiles", function(){
-			_this.storeFileContents( _this.options.viewSrc, "viewFiles", function(){
-				_callback();
-			});
-		});
-
-	}
-
-};
-
-gulpProtractorQA.init = function( options ){
-	var globals = gulpProtractorQA;
-
-	globals.options = options || {};
-
-	if (typeof globals.options.testSrc == 'undefined') {
+	if (!this.options.testSrc) {
 		throw new gutil.PluginError(PLUGIN_NAME, '`testSrc` required');
 	}
-	if (typeof globals.options.viewSrc == 'undefined') {
+	if (!this.options.viewSrc) {
 		throw new gutil.PluginError(PLUGIN_NAME, '`viewSrc` required!');
 	}
 
-	globals.bindStoreFileContents(function(){
-		globals.searchProtractorDotByContents(globals.testFiles, function beforeViewMatches(){
-			gutil.log( '[' + chalk.cyan(PLUGIN_NAME) + '] ' + chalk.gray( "// " + globals.ptorFindElements.foundList.length + " out of " + globals.totalNumOfElements + " element selectors are being watched" ) );
-		});
+	readFiles.call(this);
+}
+
+
+// Read `testSrc` and `viewSrc` files content.
+function readFiles() {
+	var self = this;
+
+	async.waterfall([
+		function(callback) {
+			storeFileContent.init(self.options.testSrc, callback);
+		},
+		function(data, callback) {
+			self.testFiles = data;
+			storeFileContent.init(self.options.viewSrc, callback);
+		},
+		function(data, callback) {
+			self.viewFiles = data;
+			callback(null, 'success');
+		}
+	], function(err, data) {
+		findElementSelectors.call(self);
+	});
+}
+
+
+// Loop through test files and find protractor
+// selectors (e.g.: by.css('[href="/"]')).
+function findElementSelectors() {
+	var self = this;
+	// reset selectors
+	this.selectors = [];
+
+	this.testFiles.forEach(function(item) {
+		self.selectors = self.selectors.concat(findSelectors.init(item));
 	});
 
-};
+	checkSelectorViewMatches.call(this);
+}
+
+function checkSelectorViewMatches() {
+	var self = this;
+
+	// Set all selectors to not found
+	this.selectors.forEach(function(item) {
+		item.found = 0;
+	});
+
+	// Check if selectors are findable
+	this.viewFiles.forEach(function(item) {
+		findViewMatches(self.selectors, item.content);
+	});
+
+	outputResult.call(this);
+}
+
+function outputResult() {
+	var notFoundItems = _.filter(this.selectors, function(item) {
+		return (!item.found && !item.disabled);
+	});
+
+	consoleOutput.printFoundItems(notFoundItems);
+
+	// On first run warn watched selectors.
+	if (this.isFirstLoad) {
+		warnWatchedSelectors.call(this);
+		this.isFirstLoad = 0;
+	}
+
+	if (!this.options.runOnce && !this.watchIsRunning) {
+		startWatchingFiles.call(this);
+	}
+}
+
+function startWatchingFiles() {
+	this.watchIsRunning = 1;
+
+	// Init gaze.
+	watchFilesChange.call(this);
+
+	// Listen to change event
+	this.on('change', onFileChange.bind(this));
+}
+
+function onFileChange(data) {
+	if (data.fileType === 'test') {
+		updateSelectors.call(this, data);
+	}
+
+	checkSelectorViewMatches.call(this);
+}
+
+function updateSelectors(data) {
+	var filtered = _.filter(this.selectors, function(selector) {
+		return !(selector.path === data.path);
+	});
+	var updatedTestFile = this.testFiles[data.index];
+	var newSelectors;
+
+	if (updatedTestFile) {
+		newSelectors = findSelectors.init(updatedTestFile);
+		this.selectors = filtered.concat(newSelectors);
+	}
+}
+
+function warnWatchedSelectors() {
+	var total = this.selectors.length;
+
+	var filtered = _.filter(this.selectors, function(selector) {
+		return !selector.disabled;
+	});
+
+	// Output `X` out `total` are being watched.
+	consoleOutput.watchedLocators(filtered.length, total);
+}
 
 // Exporting the plugin main function
-module.exports = gulpProtractorQA;
+module.exports = new GulpProtractorQA();

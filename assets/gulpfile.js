@@ -1,13 +1,19 @@
-var gulp = require('gulp'),
-	protractorQA = require('gulp-protractor-qa');
+/* jshint node:true */
+var gulp = require('gulp');
+var protractorQA = require('gulp-protractor-qa');
 
-// Registering the task
-gulp.task('protractor-qa', function() {
-    protractorQA.init({
-        testSrc : 'test/e2e/**/*Spec.js',
-        viewSrc : [ 'index.html', 'partials/*.html' ]
-    });
-});
+(function() {
+	'use strict';
 
-// Running it
-gulp.task('default', ['protractor-qa']);
+	// Register GulpProtractorQA task.
+	gulp.task('protractor-qa', function() {
+		protractorQA.init({
+			runOnce: true, // optional: when you don't want to watch files changes
+			testSrc: 'test/e2e/**/*Spec.js',
+			viewSrc: ['index.html', 'partials/*.html']
+		});
+	});
+
+	// Run `gulp` tasks.
+	gulp.task('default', ['protractor-qa']);
+})();
