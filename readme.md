@@ -82,7 +82,7 @@ Gulp-protractor-qa is currently watching the following `element()` locators:
 - `by.binding()`;
 - `by.model()`;
 - `by.repeater()`;
-- `by.css()`; // Except `:nht-child` selectors
+- `by.css()`; // Except `:nth-child` selectors
 - `by.id()`;
 - `by.className()`;
 - `by.name()`;
