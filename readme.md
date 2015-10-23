@@ -35,8 +35,8 @@ Registering the task
 gulp.task('protractor-qa', function() {
    protractorQA.init({
       runOnce: true, // optional
-      testSrc : 'test/e2e/**/*Spec.js',
-      viewSrc : [ 'index.html', 'partials/*.html' ]
+      testSrc: 'test/e2e/**/*Spec.js',
+      viewSrc: [ 'index.html', 'partials/*.html' ]
    });
 });
 ```
@@ -82,17 +82,19 @@ Gulp-protractor-qa is currently watching the following `element()` locators:
 - `by.binding()`;
 - `by.model()`;
 - `by.repeater()`;
-- `by.css()`; // Except `:nht-child` selectors
+- `by.css()`;
 - `by.id()`;
 - `by.className()`;
 - `by.name()`;
+
+Note: currently it can't find `by.css()` selectors with `:nth-child()`. 
 
 ## Changelog
 
 - **0.2.0** re-write of package api including:
 	- Introducing `runOnce` feature;
 	- Ignoring commented out element selectors;
-	- Handle any form of denormalized directives; // Except `ng:` due to `cheerio` limitation
+	- Handle any form of denormalized directives - except `ng:*` due to `cheerio` limitation;
 	- Fix a couple of bugs related to `by.css` old regex;
 	- Add suport for more protractor locators: `by.id()`, `by.className()` and `by.name()`.
 
