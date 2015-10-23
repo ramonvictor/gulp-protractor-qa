@@ -90,9 +90,10 @@ Gulp-protractor-qa is currently watching the following `element()` locators:
 ## Changelog
 
 - **0.2.0** re-write of package api including:
+	- Introducing `runOnce` feature;
 	- Ignoring commented out element selectors;
 	- Handle any form of denormalized directives; // Except `ng:` due to `cheerio` limitation
-	- A couple of bugs related to `by.css` old regex;
+	- Fix a couple of bugs related to `by.css` old regex;
 	- Add suport for more protractor locators: `by.id()`, `by.className()` and `by.name()`.
 
 - **0.1.19** improve `by.css` regex;
