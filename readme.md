@@ -33,10 +33,11 @@ var protractorQA = require('gulp-protractor-qa');
 Registering the task
 ```js
 gulp.task('protractor-qa', function() {
-    protractorQA.init({
-        testSrc : 'test/e2e/**/*Spec.js',
-        viewSrc : [ 'index.html', 'partials/*.html' ]
-    });
+   protractorQA.init({
+      runOnce: true, // optional
+      testSrc : 'test/e2e/**/*Spec.js',
+      viewSrc : [ 'index.html', 'partials/*.html' ]
+   });
 });
 ```
 
@@ -51,6 +52,14 @@ gulp.task('default', ['protractor-qa']);
 ### protractorQA(options)
 
 #### options
+
+##### runOnce
+
+Type: `Boolean`
+Default: `false`
+
+Optional: Set to `true` when you want to control yourself when to run task.
+In other words, it won't watch files changes.
 
 ##### testSrc
 
@@ -68,16 +77,23 @@ Where your AngularJS view files are located. Protractor QA will watch the change
 
 ## Watched selectors by gulp-protractor-qa
 
-Gulp-protractor-qa is currently watching the following `element()` selectors: 
-- `by.model()`;
-- `by.binding()`; 
-- `by.css('[attr-name="attr-value"]')`;
-- `by.repeater()`.
+Gulp-protractor-qa is currently watching the following `element()` locators:
 
-**Help**: I need to extend this list by adding more regex rules ([see file](https://github.com/ramonvictor/gulp-protractor-qa/blob/master/lib/util.js)).
-Interested to help? Fork the project and send a pull request! :)
+- `by.binding()`;
+- `by.model()`;
+- `by.repeater()`;
+- `by.css()`; // Except `:nht-child` selectors
+- `by.id()`;
+- `by.className()`;
+- `by.name()`;
 
 ## Changelog
+
+- **0.2.0** re-write of package api including:
+	- Ignoring commented out element selectors;
+	- Handle any form of denormalized directives; // Except `ng:` due to `cheerio` limitation
+	- A couple of bugs related to `by.css` old regex;
+	- Add suport for more protractor locators: `by.id()`, `by.className()` and `by.name()`.
 
 - **0.1.19** improve `by.css` regex;
 
