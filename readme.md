@@ -12,9 +12,11 @@ Keeping end-to-end tests up-to-date can be really painful. Gulp Protractor QA wa
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/gulp-protractor-qa.gif" alt="Video screen demo of gulp-protractor-qa in action!">
 
 
-### [Screencast](http://bit.ly/1hceBSw) (v0.1.*)
+### [Screencast](http://bit.ly/1hceBSw)
 
 <a href="http://bit.ly/1hceBSw" target="_blank"><img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/screencast-gulp-protractor-qa.jpg" width="675" height="auto" alt="How gulp-protractor-qa works?"></a>
+
+TL;DR: a couple of new features and fixes have been added since this screencast publication.
 
 ## Install
 
