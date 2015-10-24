@@ -12,16 +12,15 @@ Keeping end-to-end tests up-to-date can be really painful. Gulp Protractor QA wa
 <img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/gulp-protractor-qa.gif" alt="Video screen demo of gulp-protractor-qa in action!">
 
 
-### [Screencast](http://bit.ly/1hceBSw)
+### [Screencast](http://bit.ly/1hceBSw) (v0.1.*)
 
-<a href="http://bit.ly/1hceBSw" target="_blank"><img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/screencast-gulp-protractor-qa.jpg" width="719" height="429" alt="How gulp-protractor-qa works?"></a>
+<a href="http://bit.ly/1hceBSw" target="_blank"><img src="https://raw.githubusercontent.com/ramonvictor/gulp-protractor-qa/master/assets/screencast-gulp-protractor-qa.jpg" width="675" height="auto" alt="How gulp-protractor-qa works?"></a>
 
 ## Install
 
 ```
 npm install --save-dev gulp-protractor-qa
 ```
-[![NPM](https://nodei.co/npm/gulp-protractor-qa.png?downloads=true)](https://nodei.co/npm/gulp-protractor-qa/)
 
 ## Example
 
@@ -91,7 +90,7 @@ Note: currently it can't find `by.css()` selectors with `:nth-child()`.
 
 ## Changelog
 
-- **0.2.0** re-write of package api including:
+- **0.2.0** api completely rewritten, including:
 	- Introducing `runOnce` feature;
 	- Ignoring commented out element selectors;
 	- Handle any form of denormalized directives - except `ng:*` due to `cheerio` limitation;
