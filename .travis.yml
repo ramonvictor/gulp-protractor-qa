@@ -1,7 +1,15 @@
+env:
+  matrix:
+    - export NODE_VERSION="0.10"
+    - export NODE_VERSION="0.11"
+    - export NODE_VERSION="0.12"
+before_install:
+  - git clone https://github.com/creationix/nvm.git ./.nvm
+  - source ./.nvm/nvm.sh
+  - nvm install $NODE_VERSION
+  - nvm use $NODE_VERSION
+  - "export JOBS=4"
+  - npm install
 os:
   - osx
 language: node_js
-node_js:
-  - "0.12"
-  - "0.11"
-  - "0.10"
