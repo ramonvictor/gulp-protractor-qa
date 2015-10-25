@@ -128,10 +128,10 @@ function startWatchingFiles() {
 	this.watchIsRunning = 1;
 
 	// Init gaze.
-	watchFilesChange(this.options.testSrc, this.options.viewSrc);
+	watchFilesChange.call(this);
 
 	// Listen to change event
-	watchFilesChange.on('change', onFileChange.bind(this));
+	this.on('change', onFileChange.bind(this));
 }
 
 function onFileChange(data) {
