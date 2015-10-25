@@ -39,5 +39,10 @@ ehthumbs.db
 Thumbs.db
 
 # assets #
+######################
 assets
 node_modules
+
+# dev files #
+######################
+gulpfile.js
