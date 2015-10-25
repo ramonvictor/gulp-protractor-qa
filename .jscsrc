@@ -65,12 +65,6 @@
   "disallowSpaceBeforePostfixUnaryOperators": true,
   "requireSpaceBeforeBinaryOperators": true,
   "requireSpaceAfterBinaryOperators": true,
-  // "disallowImplicitTypeConversion": [
-  //   "numeric",
-  //   "boolean",
-  //   "binary",
-  //   "string"
-  // ],
   "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
   "disallowKeywords": ["with"],
   "disallowMultipleLineStrings": true,
@@ -85,12 +79,10 @@
   "requireDotNotation": true,
   "disallowYodaConditions": true,
   "requireSpaceAfterLineComment": true,
-  // "disallowAnonymousFunctions": false,
-  // "disallowFunctionDeclarations": true,
   "disallowNewlineBeforeBlockStatements": true,
   "validateLineBreaks": "LF",
   "validateQuoteMarks": "'",
-  "validateIndentation": false,
+  "validateIndentation": "\t",
   "validateParameterSeparator": ", ",
   "safeContextKeyword": ["self"]
 }

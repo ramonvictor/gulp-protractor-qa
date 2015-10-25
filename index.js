@@ -1,6 +1,7 @@
+'use strict';
+
 var util = require('util');
 var gutil = require('gulp-util');
-var cheerio = require('cheerio');
 var async = require('async');
 var EventEmitter = require('events');
 var _ = require('underscore');
@@ -33,13 +34,14 @@ util.inherits(GulpProtractorQA, EventEmitter);
 // @param {Object} options
 // @param {string} options.testSrc - Glob pattern string point to test files
 // @param {string} options.viewSrc - Glob pattern string point to view files
-// @param {boolean} options.runOnce - Flag to decide whether it should watch files changes or not
+// @param {boolean} options.runOnce - Disable watch feature when `true`
 GulpProtractorQA.prototype.init = function(options) {
 	this.options = options || {};
 
 	if (!this.options.testSrc) {
 		throw new gutil.PluginError(PLUGIN_NAME, '`testSrc` required');
 	}
+
 	if (!this.options.viewSrc) {
 		throw new gutil.PluginError(PLUGIN_NAME, '`viewSrc` required!');
 	}
@@ -47,9 +49,9 @@ GulpProtractorQA.prototype.init = function(options) {
 	readFiles.call(this);
 }
 
-
 // Read `testSrc` and `viewSrc` files content.
 function readFiles() {
+	/* jshint validthis:true */
 	var self = this;
 
 	async.waterfall([
@@ -64,16 +66,17 @@ function readFiles() {
 			self.viewFiles = data;
 			callback(null, 'success');
 		}
-	], function(err, data) {
+	], function() {
 		findElementSelectors.call(self);
 	});
 }
 
-
 // Loop through test files and find protractor
 // selectors (e.g.: by.css('[href="/"]')).
 function findElementSelectors() {
+	/* jshint validthis:true */
 	var self = this;
+
 	// reset selectors
 	this.selectors = [];
 
@@ -85,6 +88,7 @@ function findElementSelectors() {
 }
 
 function checkSelectorViewMatches() {
+	/* jshint validthis:true */
 	var self = this;
 
 	// Set all selectors to not found
@@ -101,6 +105,7 @@ function checkSelectorViewMatches() {
 }
 
 function outputResult() {
+	/* jshint validthis:true */
 	var notFoundItems = _.filter(this.selectors, function(item) {
 		return (!item.found && !item.disabled);
 	});
@@ -119,16 +124,18 @@ function outputResult() {
 }
 
 function startWatchingFiles() {
+	/* jshint validthis:true */
 	this.watchIsRunning = 1;
 
 	// Init gaze.
-	watchFilesChange.call(this);
+	watchFilesChange(this.options.testSrc, this.options.viewSrc);
 
 	// Listen to change event
-	this.on('change', onFileChange.bind(this));
+	watchFilesChange.on('change', onFileChange.bind(this));
 }
 
 function onFileChange(data) {
+	/* jshint validthis:true */
 	if (data.fileType === 'test') {
 		updateSelectors.call(this, data);
 	}
@@ -137,9 +144,11 @@ function onFileChange(data) {
 }
 
 function updateSelectors(data) {
+	/* jshint validthis:true */
 	var filtered = _.filter(this.selectors, function(selector) {
-		return !(selector.path === data.path);
+		return (selector.path !== data.path);
 	});
+
 	var updatedTestFile = this.testFiles[data.index];
 	var newSelectors;
 
@@ -150,6 +159,7 @@ function updateSelectors(data) {
 }
 
 function warnWatchedSelectors() {
+	/* jshint validthis:true */
 	var total = this.selectors.length;
 
 	var filtered = _.filter(this.selectors, function(selector) {
