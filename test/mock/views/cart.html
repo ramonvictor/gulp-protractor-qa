@@ -1,0 +1,21 @@
+<h1>Cart</h1>
+<table class="table table-responsive table-striped cart">
+    <tr>
+        <th colspan="2">Product</th>
+        <th class="text-right">Price</th>
+        <th>Quantity</th>
+        <th class="text-right">Line Total</th>
+    </tr>
+    <tr ng-repeat="cartItem in cart.cartItems">
+        <td class="cart-product-image">
+            <img ng-src="{{ cartItem.product.photoUrl }}" alt="{{ cartItem.product.name }}" />
+        </td>
+        <td>{{ cartItem.product.name }}</td>
+        <td class="text-right">{{ cartItem.product.price | currency }}</td>
+        <td><input type="number" min="0" step="1" class="form-control input-sm" ng-model="cartItem.quantity" /></td>
+        <td class="text-right">{{ cartItem.getSubTotal() | currency }}</td>
+    </tr>
+</table>
+<div class="well pull-right">
+    TOTAL: {{ cart.getTotal() | currency }}
+</div>

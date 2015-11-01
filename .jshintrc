@@ -21,5 +21,14 @@
   "asi": true,
   "laxcomma": true,
   "white": false,
-  "node": true
+  "node": true,
+  "predef": [
+    "describe",
+    "it",
+    "before",
+    "after",
+    "beforeEach",
+    "afterEach",
+    "done"
+  ]
 }

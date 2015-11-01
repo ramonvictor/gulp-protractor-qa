@@ -38,10 +38,11 @@
 ehthumbs.db
 Thumbs.db
 
-# assets #
+# folders #
 ######################
 assets
 node_modules
+test
 
 # dev files #
 ######################
